@@ -10,8 +10,41 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@nuxtjs/color-mode": "^3.4.0",
+    "@nuxtjs/i18n": "^8.3.0",
+    "@pinia/nuxt": "^0.5.1",
+    "@prisma/client": "^5.12.1",
+    "@radix-icons/vue": "^1.0.0",
+    "@scalar/nuxt": "^0.0.29",
+    "@vee-validate/nuxt": "^4.12.6",
+    "@vee-validate/zod": "^4.12.6",
+    "@vueuse/core": "^10.9.0",
+    "@vueuse/nuxt": "^10.9.0",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.0",
+    "emoji-mart-vue-fast": "^15.0.2",
+    "morgan": "^1.10.0",
     "nuxt": "^3.11.2",
+    "pinia": "^2.1.7",
+    "radix-vue": "^1.7.1",
+    "shadcn-nuxt": "^0.10.2",
+    "tailwind-merge": "^2.3.0",
+    "tailwindcss-animate": "^1.0.7",
+    "uuid": "^9.0.1",
+    "vee-validate": "^4.12.6",
     "vue": "^3.4.21",
-    "vue-router": "^4.3.0"
+    "vue-router": "^4.3.0",
+    "zod": "^3.23.4"
+  },
+  "devDependencies": {
+    "@nuxtjs/supabase": "^1.2.1",
+    "@nuxtjs/tailwindcss": "^6.12.0",
+    "@types/morgan": "^1.9.9",
+    "@types/uuid": "^9.0.8",
+    "nuxt-icon": "^0.6.10",
+    "prisma": "^5.12.1",
+    "sass": "^1.75.0",
+    "sass-loader": "^14.2.1",
+    "typescript": "^5.4.5"
   }
 }

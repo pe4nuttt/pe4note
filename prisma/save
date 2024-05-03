@@ -1,0 +1,49 @@
+model Workspaces {
+  id             String    @id @default(uuid()) @db.Uuid
+  created_at     DateTime  @default(now()) @db.Timestamptz(6)
+  workspaceOwner String    @unique @db.Uuid
+  title          String    @db.Text
+  iconId         String    @db.Text
+  data           String?   @db.Text
+  inTrash        String?   @db.Text
+  logo           String?   @db.Text
+  bannerUrl      String?   @db.Text
+  Folders        Folders[]
+  Files          Files[]
+
+  @@schema("public")
+}
+
+model Folders {
+  id             String     @id @default(uuid()) @db.Uuid
+  created_at     DateTime   @default(now()) @db.Timestamptz(6)
+  title          String     @db.Text
+  iconId         String     @db.Text
+  data           String?    @db.Text
+  inTrash        String?    @db.Text
+  bannerUrl      String?    @db.Text
+  workspaceId    String     @db.Uuid
+  workspace      Workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  parentFolder   Folders?   @relation("ChildFolders", fields: [parentFolderId], references: [id])
+  parentFolderId String?    @db.Uuid
+  Files          Files[]
+  Folders        Folders[]  @relation("ChildFolders")
+
+  @@schema("public")
+}
+
+model Files {
+  id          String     @id @default(uuid()) @db.Uuid
+  created_at  DateTime   @default(now()) @db.Timestamptz(6)
+  title       String     @db.Text
+  iconId      String     @db.Text
+  data        String?    @db.Text
+  inTrash     String?    @db.Text
+  bannerUrl   String?    @db.Text
+  workspaceId String     @db.Uuid
+  workspace   Workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  folderId    String     @db.Uuid
+  folder      Folders    @relation(fields: [folderId], references: [id], onDelete: Cascade)
+
+  @@schema("public")
+}
