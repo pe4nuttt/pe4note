@@ -1,4 +1,3 @@
-vbase
 <template>
   <Card class="w-[800px] h-screen sm:h-auto">
     <CardHeader>
@@ -12,13 +11,20 @@ vbase
       <form @submit="onSubmit">
         <div class="flex flex-col gap-4">
           <div class="flex gap-4 items-center">
-            <div>
-              <EmojiPicker>
+            <FormField v-slot="{ componentField }" name="iconId">
+              <EmojiPicker
+                :modalValue="componentField.modelValue"
+                @update:model-value="componentField['onUpdate:modelValue']"
+                v-bind="componentField"
+              >
+                <!-- :value="componentField.modelValue"
+                @change="componentField.onChange"
+                @input="componentField.onInput" -->
                 <template v-slot="slotProps">
                   <span class="text-5xl">{{ slotProps.value }}</span>
                 </template>
               </EmojiPicker>
-            </div>
+            </FormField>
 
             <FormField v-slot="{ componentField }" name="workspaceName">
               <FormItem v-auto-animate class="flex-1">
@@ -40,21 +46,21 @@ vbase
           <FormField v-slot="{ componentField }" name="logo">
             <FormItem v-auto-animate>
               <FormLabel class="text-muted-foreground text-sm"
-                >Worksapce Logo</FormLabel
+                >Workspace Logo</FormLabel
               >
               <FormControl>
                 <Input
                   class="bg-transparent"
                   type="file"
                   accept="image/*"
-                  v-bind="componentField"
+                  @change="componentField.onChange"
+                  @blur="componentField.onBlur"
                 />
               </FormControl>
               <FormMessage />
             </FormItem>
           </FormField>
         </div>
-
         <div class="text-end mt-6">
           <Button type="submit" :disabled="isSubmitting">
             <Loader v-if="isSubmitting" />
@@ -89,6 +95,7 @@ import {
 import Loader from '@/components/global/Loader.vue';
 import EmojiPicker from '@/components/global/EmojiPicker/index.vue';
 import { useForm } from 'vee-validate';
+// import {  } from '@vee-validate/nuxt'
 import { toTypedSchema } from '@vee-validate/zod';
 import { CreateWorkspaceSchema } from '~/lib/types';
 import { v4 as uuidv4 } from 'uuid';
@@ -99,63 +106,75 @@ import type { Workspace } from '~/lib/services/service.type';
 const createWorkspaceFormSchema = toTypedSchema(CreateWorkspaceSchema);
 
 // Data
+const supabase = useSupabaseClient();
 const { toast } = useToast();
-// const authStore = useAuthStore();
+const userStore = useUserStore();
+const { apiFetch } = useBaseFetch();
 
-const { isSubmitting, handleSubmit } = useForm({
+const { isSubmitting, handleSubmit, errors, setFieldValue } = useForm({
   validationSchema: createWorkspaceFormSchema,
   initialValues: {
-    workspaceName: '',
+    workspaceName: 'Test',
     logo: null,
+    iconId: '💼',
   },
+});
+
+// Watch
+watch(errors, val => {
+  console.log('WATCH ERROR::', val);
 });
 
 // Methods
 const onSubmit = handleSubmit(async values => {
+  console.log('SUBMIT');
   console.log(values);
 
-  // const file = values.logo;
-  // let filePath = null;
-  // const workspaceId = uuidv4();
+  const file = values.logo;
+  let filePath = null;
+  const workspaceId = uuidv4();
 
-  // console.log('File:: ', file);
-  // if (file) {
-  //   // 1. Upload file to storage
-  //   try {
-  //     const { data, error } = await supabase.storage
-  //       .from('workspace-logos')
-  //       .upload(`workspaceLogo.${workspaceId}`, file, {
-  //         cacheControl: '3600',
-  //         upsert: true,
-  //       });
+  console.log('File:: ', file);
+  if (file) {
+    // 1. Upload file to storage
+    try {
+      const { data, error } = await supabase.storage
+        .from('workspace-logos')
+        .upload(`workspaceLogo.${workspaceId}`, file, {
+          cacheControl: '3600',
+          upsert: true,
+        });
 
-  //     if (error) throw new Error('');
-  //     filePath = data.path;
-  //     console.log(filePath);
-  //   } catch (error) {
-  //     console.log('Error', error);
-  //     toast({
-  //       variant: 'destructive',
-  //       title: 'Error! Could not upload your workspace logo',
-  //     });
-  //   }
+      if (error) throw new Error('');
+      filePath = data.path;
+      console.log(filePath);
+    } catch (error) {
+      console.log('Error', error);
+      toast({
+        variant: 'destructive',
+        title: 'Error! Could not upload your workspace logo',
+      });
+    }
+  }
+  // 2. Create workspace
+  try {
+    const newWorkspace: Workspace = {
+      data: null,
+      created_at: new Date(),
+      iconId: values.iconId,
+      id: workspaceId,
+      inTrash: '',
+      title: values.workspaceName,
+      workspaceOwner: userStore.user?.id || '',
+      bannerUrl: '',
+      logo: filePath || null,
+    };
 
-  //   // 2. Create workspace
-  //   try {
-  //     const newWorkspace: Workspace = {
-  //       data: null,
-  //       created_at: new Date().toISOString(),
-  //       icon_id: '',
-  //       id: workspaceId,
-  //       in_trash: '',
-  //       title: values.workspaceName,
-  //       workspace_owner: authStore?.session?.user?.id || '',
-  //       banner_url: '',
-  //       logo: filePath || null,
-  //     };
+    const res = await createWorkspaceApi(newWorkspace);
 
-  //     createWorkspace(newWorkspace);
-  //   } catch (error) {}
-  // }
+    navigateTo(`/dashboard/${workspaceId}`);
+  } catch (error) {
+    console.log('[ERROR] createWorkspaceApi::', error);
+  }
 });
 </script>

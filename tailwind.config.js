@@ -1,4 +1,9 @@
 const animate = require('tailwindcss-animate');
+import { getThemeReplacementsValues } from './utils/tailwindViewer.js';
+
+const themeReplacementsValues = getThemeReplacementsValues(
+  './assets/styles/tailwind.scss',
+);
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -92,6 +97,9 @@ module.exports = {
         'collapsible-down': 'collapsible-down 0.2s ease-in-out',
         'collapsible-up': 'collapsible-up 0.2s ease-in-out',
       },
+    },
+    configViewer: {
+      themeReplacements: themeReplacementsValues,
     },
   },
   plugins: [animate],

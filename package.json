@@ -10,10 +10,11 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@nuxt/image": "^1.7.0",
     "@nuxtjs/color-mode": "^3.4.0",
     "@nuxtjs/i18n": "^8.3.0",
     "@pinia/nuxt": "^0.5.1",
-    "@prisma/client": "^5.12.1",
+    "@prisma/client": "^5.13.0",
     "@radix-icons/vue": "^1.0.0",
     "@scalar/nuxt": "^0.0.29",
     "@vee-validate/nuxt": "^4.12.6",
@@ -28,13 +29,14 @@
     "pinia": "^2.1.7",
     "radix-vue": "^1.7.1",
     "shadcn-nuxt": "^0.10.2",
+    "split.js": "^1.6.5",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
     "uuid": "^9.0.1",
     "vee-validate": "^4.12.6",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0",
-    "zod": "^3.23.4"
+    "zod": "^3.23.6"
   },
   "devDependencies": {
     "@nuxtjs/supabase": "^1.2.1",

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { File, Folder, Workspace } from './services/service.type';
 
 export const SignUpFormSchema = z.object({
   email: z.string().nonempty('Field is requried').email().min(2).max(50),
@@ -15,10 +16,19 @@ export const CreateWorkspaceSchema = z.object({
     .string()
     .describe('Workspace Name')
     .min(1, 'Workspace name must be min of 1 character'),
-  title: z.string().describe('Workspace must have title'),
+  // title: z
+  //   .string()
+  //   .describe('Workspace Name')
+  //   .min(1, 'Workspace name must be min of 1 character'),
   iconId: z.string().describe('Workspace must have icon'),
-  logo: z.string().nullish(),
+  logo: z.any().nullish(),
   data: z.string().nullish(),
   inTrash: z.string().nullish(),
   bannerUrl: z.string().nullish(),
 });
+
+export type AppFolderType = Folder & { files: File | [] };
+
+export type AppWorkspaceType = Workspace & {
+  folders: AppFolderType[] | [];
+};

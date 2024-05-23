@@ -4,7 +4,12 @@
       <slot :value="emojiOutput"></slot>
     </PopoverTrigger>
     <PopoverContent class="p-0">
-      <Picker :data="emojiIndex" @select="onSelectEmoji" :size="50" />
+      <Picker
+        :data="emojiIndex"
+        @select="onSelectEmoji"
+        :size="50"
+        emoji="department_store"
+      />
     </PopoverContent>
   </Popover>
 </template>

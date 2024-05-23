@@ -1,9 +1,13 @@
 <template>
-  <div>
+  <div class="h-screen w-screen flex items-center justify-center">
     <DashboardSetup />
   </div>
 </template>
 
-<script setup></script>
+<script setup lang="ts">
+definePageMeta({
+  layout: 'empty',
+});
+</script>
 
 <style lang="scss" scoped></style>
