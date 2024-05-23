@@ -3,7 +3,6 @@ const whiteList = ['/auth/login', 'error'];
 
 export default defineNuxtRouteMiddleware((to, _from) => {
   const user = useSupabaseUser();
-
   if (user.value) {
     if (to.fullPath === '/auth/login') {
       return navigateTo('/dashboard', {
@@ -18,11 +17,9 @@ export default defineNuxtRouteMiddleware((to, _from) => {
       return;
     }
   }
-
   if (whiteList.includes(to.fullPath)) {
     return;
   }
-
   return navigateTo('/auth/login', {
     replace: true,
   });
@@ -36,7 +33,6 @@ export default defineNuxtRouteMiddleware((to, _from) => {
   //   }
   //   return;
   // }
-
   // if (!user.value) {
   //   return navigateTo('/auth/login', {
   //     replace: true,

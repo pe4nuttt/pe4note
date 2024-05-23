@@ -1,0 +1,65 @@
+<template>
+  <div>
+    <!-- class="flex rounded-md bg-transparent hover:bg-accent transition-all flex-row p-2 gap-4 justify-center cursor-pointer items-center my-2" -->
+    <nuxt-link
+      :class="
+        cn(
+          buttonVariants({ variant: 'outline', size: 'default' }),
+          'flex w-full h-9 justify-start items-center dark:text-white hover:bg-muted',
+        )
+      "
+      :to="`/dashboard/${workspace.id}`"
+    >
+      <div class="flex items-center flex-1">
+        <NuxtImg
+          :src="workspaceLogo"
+          alt="workspace logo"
+          :width="20"
+          :height="20"
+          objectFit="cover"
+        />
+        <div class="flex flex-col ml-3">
+          <p
+            class="text-base overflow-hidden overflow-ellipsis whitespace-nowrap"
+          >
+            {{ workspace.title }}
+          </p>
+        </div>
+      </div>
+      <Icon name="ion:chevron-expand-outline" class="text-foreground"></Icon>
+    </nuxt-link>
+    <!-- {{ workspace }} -->
+  </div>
+</template>
+
+<script setup lang="ts">
+import type { Workspace } from '~/lib/services/service.type';
+import type { AppWorkspaceType } from '~/lib/types';
+import { buttonVariants } from '~/components/ui/button';
+import { cn } from '@/lib/utils';
+
+interface Props {
+  workspace: Workspace | AppWorkspaceType;
+}
+
+const { workspace } = defineProps<Props>();
+
+const supabase = useSupabaseClient();
+
+// Data
+
+// Computed
+const workspaceLogo = computed(() => {
+  // if (workspace.logo) {
+  //   const path = supabase.storage
+  //     .from('workspace-logos')
+  //     .getPublicUrl(workspace.logo)?.data.publicUrl;
+  //   console.log('[LOGO]', path);
+  //   return path;
+  // }
+
+  return './cypresslogo.svg';
+});
+</script>
+
+<style scoped></style>

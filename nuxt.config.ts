@@ -9,7 +9,9 @@ export default defineNuxtConfig({
     'nuxt-icon',
     '@nuxtjs/supabase',
     '@pinia/nuxt',
+    // '@vee-validate/nuxt',
     '@scalar/nuxt',
+    '@nuxt/image',
   ],
   supabase: {
     redirect: false,
@@ -30,7 +32,7 @@ export default defineNuxtConfig({
     componentDir: './components/ui',
   },
   tailwindcss: {
-    cssPath: ['~/assets/styles/tailwind.scss', { injectionPosition: 'last' }],
+    cssPath: ['~/assets/styles/tailwind.scss', { injectPosition: 'last' }],
   },
   colorMode: {
     preference: 'system', // default value of $colorMode.preference
@@ -42,6 +44,22 @@ export default defineNuxtConfig({
     classSuffix: '',
     storageKey: 'nuxt-color-mode',
   },
+  veeValidate: {
+    // disable or enable auto imports
+    autoImports: true,
+  },
+  image: {
+    providers: {
+      myProvider: {
+        name: 'supabaseProvider', // optional value to overrider provider name
+        provider: '~/providers/imageProvider.ts', // Path to custom provider
+        options: {
+          // ... provider options
+          baseURL: 'ywwdqpsdrfzxsazuyiss.supabase.co',
+        },
+      },
+    },
+  },
   nitro: {
     experimental: {
       openAPI: true,
@@ -51,5 +69,9 @@ export default defineNuxtConfig({
     pathRouting: {
       basePath: '/scalar',
     },
+  },
+  env: {
+    SUPABASE_URL: process.env.SUPABASE_URL,
+    SUPABASE_PASSWORD: process.env.SUPABASE_PASSWORD,
   },
 });

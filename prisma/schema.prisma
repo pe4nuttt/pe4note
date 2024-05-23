@@ -10,56 +10,6 @@ datasource db {
   schemas   = ["auth", "public"]
 }
 
-model Workspaces {
-  id             String    @id @default(uuid()) @db.Uuid
-  created_at     DateTime  @default(now()) @db.Timestamptz(6)
-  workspaceOwner String    @unique @db.Uuid
-  title          String
-  iconId         String
-  data           String?
-  inTrash        String?
-  logo           String?
-  bannerUrl      String?
-  Files          Files[]
-  Folders        Folders[]
-
-  @@schema("public")
-}
-
-model Folders {
-  id             String     @id @default(uuid()) @db.Uuid
-  created_at     DateTime   @default(now()) @db.Timestamptz(6)
-  title          String
-  iconId         String
-  data           String?
-  inTrash        String?
-  bannerUrl      String?
-  workspaceId    String     @db.Uuid
-  parentFolderId String?    @db.Uuid
-  Files          Files[]
-  parentFolder   Folders?   @relation("ChildFolders", fields: [parentFolderId], references: [id])
-  Folders        Folders[]  @relation("ChildFolders")
-  workspace      Workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-
-  @@schema("public")
-}
-
-model Files {
-  id          String     @id @default(uuid()) @db.Uuid
-  created_at  DateTime   @default(now()) @db.Timestamptz(6)
-  title       String
-  iconId      String
-  data        String?
-  inTrash     String?
-  bannerUrl   String?
-  workspaceId String     @db.Uuid
-  folderId    String     @db.Uuid
-  folder      Folders    @relation(fields: [folderId], references: [id], onDelete: Cascade)
-  workspace   Workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-
-  @@schema("public")
-}
-
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model audit_log_entries {
   instance_id String?   @db.Uuid
@@ -165,6 +115,23 @@ model mfa_factors {
 
   @@index([user_id, created_at], map: "factor_id_created_at_idx")
   @@index([user_id])
+  @@schema("auth")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model one_time_tokens {
+  id         String              @id @db.Uuid
+  user_id    String              @db.Uuid
+  token_type one_time_token_type
+  token_hash String
+  relates_to String
+  created_at DateTime            @default(now()) @db.Timestamp(6)
+  updated_at DateTime            @default(now()) @db.Timestamp(6)
+  users      auth_users          @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([user_id, token_type])
+  @@index([relates_to], map: "one_time_tokens_relates_to_hash_idx", type: Hash)
+  @@index([token_hash], map: "one_time_tokens_token_hash_hash_idx", type: Hash)
   @@schema("auth")
 }
 
@@ -291,43 +258,44 @@ model sso_providers {
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 /// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
 model auth_users {
-  instance_id                 String?         @db.Uuid
-  id                          String          @id @db.Uuid
-  aud                         String?         @db.VarChar(255)
-  role                        String?         @db.VarChar(255)
-  email                       String?         @db.VarChar(255)
-  encrypted_password          String?         @db.VarChar(255)
-  email_confirmed_at          DateTime?       @db.Timestamptz(6)
-  invited_at                  DateTime?       @db.Timestamptz(6)
-  confirmation_token          String?         @db.VarChar(255)
-  confirmation_sent_at        DateTime?       @db.Timestamptz(6)
-  recovery_token              String?         @db.VarChar(255)
-  recovery_sent_at            DateTime?       @db.Timestamptz(6)
-  email_change_token_new      String?         @db.VarChar(255)
-  email_change                String?         @db.VarChar(255)
-  email_change_sent_at        DateTime?       @db.Timestamptz(6)
-  last_sign_in_at             DateTime?       @db.Timestamptz(6)
+  instance_id                 String?           @db.Uuid
+  id                          String            @id @db.Uuid
+  aud                         String?           @db.VarChar(255)
+  role                        String?           @db.VarChar(255)
+  email                       String?           @db.VarChar(255)
+  encrypted_password          String?           @db.VarChar(255)
+  email_confirmed_at          DateTime?         @db.Timestamptz(6)
+  invited_at                  DateTime?         @db.Timestamptz(6)
+  confirmation_token          String?           @db.VarChar(255)
+  confirmation_sent_at        DateTime?         @db.Timestamptz(6)
+  recovery_token              String?           @db.VarChar(255)
+  recovery_sent_at            DateTime?         @db.Timestamptz(6)
+  email_change_token_new      String?           @db.VarChar(255)
+  email_change                String?           @db.VarChar(255)
+  email_change_sent_at        DateTime?         @db.Timestamptz(6)
+  last_sign_in_at             DateTime?         @db.Timestamptz(6)
   raw_app_meta_data           Json?
   raw_user_meta_data          Json?
   is_super_admin              Boolean?
-  created_at                  DateTime?       @db.Timestamptz(6)
-  updated_at                  DateTime?       @db.Timestamptz(6)
-  phone                       String?         @unique
-  phone_confirmed_at          DateTime?       @db.Timestamptz(6)
-  phone_change                String?         @default("")
-  phone_change_token          String?         @default("") @db.VarChar(255)
-  phone_change_sent_at        DateTime?       @db.Timestamptz(6)
-  confirmed_at                DateTime?       @default(dbgenerated("LEAST(email_confirmed_at, phone_confirmed_at)")) @db.Timestamptz(6)
-  email_change_token_current  String?         @default("") @db.VarChar(255)
-  email_change_confirm_status Int?            @default(0) @db.SmallInt
-  banned_until                DateTime?       @db.Timestamptz(6)
-  reauthentication_token      String?         @default("") @db.VarChar(255)
-  reauthentication_sent_at    DateTime?       @db.Timestamptz(6)
-  is_sso_user                 Boolean         @default(false)
-  deleted_at                  DateTime?       @db.Timestamptz(6)
-  is_anonymous                Boolean         @default(false)
+  created_at                  DateTime?         @db.Timestamptz(6)
+  updated_at                  DateTime?         @db.Timestamptz(6)
+  phone                       String?           @unique
+  phone_confirmed_at          DateTime?         @db.Timestamptz(6)
+  phone_change                String?           @default("")
+  phone_change_token          String?           @default("") @db.VarChar(255)
+  phone_change_sent_at        DateTime?         @db.Timestamptz(6)
+  confirmed_at                DateTime?         @default(dbgenerated("LEAST(email_confirmed_at, phone_confirmed_at)")) @db.Timestamptz(6)
+  email_change_token_current  String?           @default("") @db.VarChar(255)
+  email_change_confirm_status Int?              @default(0) @db.SmallInt
+  banned_until                DateTime?         @db.Timestamptz(6)
+  reauthentication_token      String?           @default("") @db.VarChar(255)
+  reauthentication_sent_at    DateTime?         @db.Timestamptz(6)
+  is_sso_user                 Boolean           @default(false)
+  deleted_at                  DateTime?         @db.Timestamptz(6)
+  is_anonymous                Boolean           @default(false)
   identities                  identities[]
   mfa_factors                 mfa_factors[]
+  one_time_tokens             one_time_tokens[]
   sessions                    sessions[]
   customers                   customers?
   subscriptions               subscriptions[]
@@ -337,6 +305,70 @@ model auth_users {
   @@index([is_anonymous])
   @@map("users")
   @@schema("auth")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model Collaborators {
+  id          String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at  DateTime      @default(now()) @db.Timestamptz(6)
+  workspaceId String?       @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId      String?       @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  users       public_users? @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  Workspaces  Workspaces?   @relation(fields: [workspaceId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@schema("public")
+}
+
+model Files {
+  id          String     @id @db.Uuid
+  created_at  DateTime   @default(now()) @db.Timestamptz(6)
+  title       String
+  iconId      String
+  data        String?
+  inTrash     String?
+  bannerUrl   String?
+  workspaceId String     @db.Uuid
+  folderId    String     @db.Uuid
+  Folders     Folders    @relation(fields: [folderId], references: [id], onDelete: Cascade)
+  Workspaces  Workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@schema("public")
+}
+
+model Folders {
+  id             String     @id @db.Uuid
+  created_at     DateTime   @default(now()) @db.Timestamptz(6)
+  title          String
+  iconId         String
+  data           String?
+  inTrash        String?
+  bannerUrl      String?
+  workspaceId    String     @db.Uuid
+  parentFolderId String?    @db.Uuid
+  Files          Files[]
+  Folders        Folders?   @relation("FoldersToFolders", fields: [parentFolderId], references: [id])
+  other_Folders  Folders[]  @relation("FoldersToFolders")
+  Workspaces     Workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@schema("public")
+}
+
+model Workspaces {
+  id             String          @id @db.Uuid
+  created_at     DateTime        @default(now()) @db.Timestamptz(6)
+  title          String
+  iconId         String
+  data           String?
+  inTrash        String?
+  logo           String?
+  bannerUrl      String?
+  workspaceOwner String?         @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  Collaborators  Collaborators[]
+  Files          Files[]
+  Folders        Folders[]
+  users          public_users?   @relation(fields: [workspaceOwner], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@schema("public")
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
@@ -406,14 +438,16 @@ model subscriptions {
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model public_users {
-  id              String     @id @db.Uuid
+  id              String          @id @db.Uuid
   full_name       String?
   avatar_url      String?
   billing_address Json?
-  updated_at      DateTime?  @db.Timestamptz(6)
+  updated_at      DateTime?       @db.Timestamptz(6)
   payment_method  Json?
   email           String?
-  users           auth_users @relation(fields: [id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Collaborators   Collaborators[]
+  Workspaces      Workspaces[]
+  users           auth_users      @relation(fields: [id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@map("users")
   @@schema("public")
@@ -444,6 +478,17 @@ enum factor_status {
 enum factor_type {
   totp
   webauthn
+
+  @@schema("auth")
+}
+
+enum one_time_token_type {
+  confirmation_token
+  reauthentication_token
+  recovery_token
+  email_change_token_new
+  email_change_token_current
+  phone_change_token
 
   @@schema("auth")
 }

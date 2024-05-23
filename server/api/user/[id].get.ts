@@ -10,13 +10,19 @@ export default defineEventHandler(async event => {
       message: 'Bad Request',
     });
 
-  const user = await UserService.getUserById(userId);
+  try {
+    const user = await UserService.getUserById(userId);
 
-  if (!user)
+    if (!user)
+      throw createError({
+        status: 404,
+        message: 'User not found',
+      });
+    return user;
+  } catch (error: any) {
+    console.log('[ERROR] get user', error);
     throw createError({
-      status: 404,
-      message: 'User not found',
+      message: error?.message || error,
     });
-
-  return user;
+  }
 });
