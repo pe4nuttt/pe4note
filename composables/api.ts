@@ -4,6 +4,7 @@ import type {
   GetWorkspaceListType,
   Workspace,
 } from '~/lib/services/service.type';
+import type { AppWorkspaceType } from '~/lib/types';
 
 export const createWorkspaceApi = async (
   workspace: Workspace,
@@ -61,5 +62,14 @@ export const addCollaboratorsApi = async (
     body: {
       collaboratorIds,
     },
+  });
+};
+
+export const getWorkspaceDetailApi = async (
+  workspaceId: string,
+): Promise<{ data: AppWorkspaceType }> => {
+  const { apiFetch } = useBaseFetch();
+  return await apiFetch(`/workspace/${workspaceId}`, {
+    method: 'GET',
   });
 };

@@ -1,5 +1,5 @@
 -- CreateTable
-CREATE TABLE "Workspaces" (
+CREATE TABLE "workspaces" (
     "id" UUID NOT NULL,
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "workspaceOwner" UUID NOT NULL,
@@ -14,7 +14,7 @@ CREATE TABLE "Workspaces" (
 );
 
 -- CreateTable
-CREATE TABLE "Folders" (
+CREATE TABLE "folders" (
     "id" UUID NOT NULL,
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "title" TEXT NOT NULL,
@@ -29,7 +29,7 @@ CREATE TABLE "Folders" (
 );
 
 -- CreateTable
-CREATE TABLE "Files" (
+CREATE TABLE "files" (
     "id" UUID NOT NULL,
     "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "title" TEXT NOT NULL,
@@ -44,16 +44,16 @@ CREATE TABLE "Files" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Workspaces_workspaceOwner_key" ON "Workspaces"("workspaceOwner");
+CREATE UNIQUE INDEX "Workspaces_workspaceOwner_key" ON "workspaces"("workspaceOwner");
 
 -- AddForeignKey
-ALTER TABLE "Folders" ADD CONSTRAINT "Folders_workspaceId_fkey" FOREIGN KEY ("workspaceId") REFERENCES "Workspaces"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "folders" ADD CONSTRAINT "Folders_workspaceId_fkey" FOREIGN KEY ("workspaceId") REFERENCES "workspaces"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Folders" ADD CONSTRAINT "Folders_parentFolderId_fkey" FOREIGN KEY ("parentFolderId") REFERENCES "Folders"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "folders" ADD CONSTRAINT "Folders_parentFolderId_fkey" FOREIGN KEY ("parentFolderId") REFERENCES "folders"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Files" ADD CONSTRAINT "Files_workspaceId_fkey" FOREIGN KEY ("workspaceId") REFERENCES "Workspaces"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "files" ADD CONSTRAINT "Files_workspaceId_fkey" FOREIGN KEY ("workspaceId") REFERENCES "workspaces"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Files" ADD CONSTRAINT "Files_folderId_fkey" FOREIGN KEY ("folderId") REFERENCES "Folders"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "files" ADD CONSTRAINT "Files_folderId_fkey" FOREIGN KEY ("folderId") REFERENCES "folders"("id") ON DELETE CASCADE ON UPDATE CASCADE;

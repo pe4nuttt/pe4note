@@ -27,3 +27,18 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   // background: #fff;
 }
+
+// Context menu
+.destructive-context-menu-item {
+  & > div {
+    overflow: hidden;
+    > a {
+      color: rgb(234, 55, 55);
+      // color: hsl(var(--destructive));
+      &:hover {
+        background-color: hsl(var(--destructive));
+        color: hsl(var(--destructive-foreground));
+      }
+    }
+  }
+}

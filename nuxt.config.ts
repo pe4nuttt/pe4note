@@ -12,6 +12,8 @@ export default defineNuxtConfig({
     // '@vee-validate/nuxt',
     '@scalar/nuxt',
     '@nuxt/image',
+    'floating-vue/nuxt',
+    'nuxt-primevue',
   ],
   supabase: {
     redirect: false,
@@ -30,6 +32,12 @@ export default defineNuxtConfig({
      * @default "./components/ui"
      */
     componentDir: './components/ui',
+  },
+  primevue: {
+    usePrimeVue: false,
+    components: {
+      include: '*',
+    },
   },
   tailwindcss: {
     cssPath: ['~/assets/styles/tailwind.scss', { injectPosition: 'last' }],

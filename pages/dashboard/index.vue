@@ -16,10 +16,9 @@ const workspace = ref(null);
 const getWorkspace = async (uid: string) => {
   try {
     const { data, error } = await supabaseClient
-      .from('Workspaces')
+      .from('workspaces')
       .select()
       .eq('workspaceOwner', uid);
-    // const workspace.value = await apiFetch()
     console.log('getWorkspace', data);
 
     if (data?.length) {

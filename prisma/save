@@ -1,4 +1,4 @@
-model Workspaces {
+model workspaces {
   id             String    @id @default(uuid()) @db.Uuid
   created_at     DateTime  @default(now()) @db.Timestamptz(6)
   workspaceOwner String    @unique @db.Uuid
@@ -8,13 +8,13 @@ model Workspaces {
   inTrash        String?   @db.Text
   logo           String?   @db.Text
   bannerUrl      String?   @db.Text
-  Folders        Folders[]
-  Files          Files[]
+  folders        folders[]
+  files          files[]
 
   @@schema("public")
 }
 
-model Folders {
+model folders {
   id             String     @id @default(uuid()) @db.Uuid
   created_at     DateTime   @default(now()) @db.Timestamptz(6)
   title          String     @db.Text
@@ -23,16 +23,16 @@ model Folders {
   inTrash        String?    @db.Text
   bannerUrl      String?    @db.Text
   workspaceId    String     @db.Uuid
-  workspace      Workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  parentFolder   Folders?   @relation("ChildFolders", fields: [parentFolderId], references: [id])
+  Workspace      workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  parentFolder   folders?   @relation("ChildFolders", fields: [parentFolderId], references: [id])
   parentFolderId String?    @db.Uuid
-  Files          Files[]
-  Folders        Folders[]  @relation("ChildFolders")
+  files          files[]
+  folders        folders[]  @relation("ChildFolders")
 
   @@schema("public")
 }
 
-model Files {
+model files {
   id          String     @id @default(uuid()) @db.Uuid
   created_at  DateTime   @default(now()) @db.Timestamptz(6)
   title       String     @db.Text
@@ -41,9 +41,9 @@ model Files {
   inTrash     String?    @db.Text
   bannerUrl   String?    @db.Text
   workspaceId String     @db.Uuid
-  workspace   Workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  Workspace   workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   folderId    String     @db.Uuid
-  folder      Folders    @relation(fields: [folderId], references: [id], onDelete: Cascade)
+  Folder      folders    @relation(fields: [folderId], references: [id], onDelete: Cascade)
 
   @@schema("public")
 }

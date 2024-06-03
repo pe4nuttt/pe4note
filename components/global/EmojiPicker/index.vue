@@ -5,6 +5,8 @@
     </PopoverTrigger>
     <PopoverContent class="p-0">
       <Picker
+        ref="emojiPickerRef"
+        class="emoji-picker-wrapper"
         :data="emojiIndex"
         @select="onSelectEmoji"
         :size="50"
@@ -40,6 +42,7 @@ const emits = defineEmits<{
 }>();
 
 // Data
+const emojiPickerRef = ref(null);
 const pickerId = ref(uuidv4());
 const emojiIndex = ref(emojiIndexData);
 
@@ -80,6 +83,10 @@ function onSelectEmoji(emoji: any) {
   emits('update:modelValue', emoji.native);
   emojiOutput.value = emoji.native;
 }
+
+defineExpose({
+  emojiPickerRef,
+});
 </script>
 
 <style scoped></style>

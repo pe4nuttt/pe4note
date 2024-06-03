@@ -27,8 +27,12 @@ export const CreateWorkspaceSchema = z.object({
   bannerUrl: z.string().nullish(),
 });
 
-export type AppFolderType = Folder & { files: File | [] };
+export type AppFolderType = Folder & {
+  files?: File[] | [];
+  folders?: Folder[];
+};
 
 export type AppWorkspaceType = Workspace & {
   folders: AppFolderType[] | [];
+  files: File[] | [];
 };

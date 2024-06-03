@@ -3,8 +3,8 @@
     <CardHeader>
       <CardTitle>Create A Workspace</CardTitle>
       <CardDescription
-        >Let's create a private workspace to get you started. You can add
-        collaborators later from the workspace setting tab.</CardDescription
+        >Let's create a private Workspace to get you started. You can add
+        collaborators later from the Workspace setting tab.</CardDescription
       >
     </CardHeader>
     <CardContent>
@@ -136,7 +136,7 @@ const onSubmit = handleSubmit(async values => {
 
   console.log('File:: ', file);
   if (file) {
-    // 1. Upload file to storage
+    // 1. Upload File to storage
     try {
       const { data, error } = await supabase.storage
         .from('workspace-logos')
@@ -152,11 +152,11 @@ const onSubmit = handleSubmit(async values => {
       console.log('Error', error);
       toast({
         variant: 'destructive',
-        title: 'Error! Could not upload your workspace logo',
+        title: 'Error! Could not upload your Workspace logo',
       });
     }
   }
-  // 2. Create workspace
+  // 2. Create Workspace
   try {
     const newWorkspace: Workspace = {
       data: null,

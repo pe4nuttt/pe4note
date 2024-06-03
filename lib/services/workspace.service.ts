@@ -1,14 +1,15 @@
 import prisma_client from '~/prisma/prisma.client';
 import { z } from 'zod';
-import type { CreateWorkspaceSchema } from '../types';
+import type { AppWorkspaceType, CreateWorkspaceSchema } from '../types';
 import type { Workspace } from './service.type';
 import { validate } from 'uuid';
-import { Prisma, type Workspaces } from '@prisma/client';
+import { Prisma, type collaborators, type workspaces } from '@prisma/client';
+import { FolderService } from './folder.service';
 
 export namespace WorkspaceService {
   export async function createWorkspace(
     workspace: Workspace,
-    // workspace: z.infer<typeof CreateWorkspaceSchema>,
+    // Workspace: z.infer<typeof CreateWorkspaceSchema>,
   ) {
     const newWorkspace = await prisma_client.workspaces.create({
       data: {
@@ -17,6 +18,90 @@ export namespace WorkspaceService {
     });
 
     return newWorkspace;
+  }
+
+  export async function getWorkspaceById(workspaceId: string) {
+    const workspace = await prisma_client.workspaces.findUnique({
+      where: {
+        id: workspaceId,
+      },
+    });
+
+    return workspace;
+  }
+
+  export async function getWorkspaceByIdWithPermission(
+    uid: string,
+    workspaceId: string,
+  ) {
+    let havePermission = false;
+    const workspace:
+      | (AppWorkspaceType & {
+          collaborators: collaborators[];
+        })
+      | null = await prisma_client.workspaces.findUnique({
+      where: {
+        id: workspaceId,
+      },
+      include: {
+        collaborators: {
+          include: {
+            users: true,
+          },
+        },
+        folders: {
+          where: {
+            parentFolderId: null,
+          },
+        },
+        files: {
+          where: {
+            folderId: null,
+          },
+        },
+      },
+    });
+
+    if (!workspace) {
+      throw createError({
+        status: 400,
+        message: 'Invalid workspace id',
+      });
+    }
+
+    if (workspace.workspaceOwner === uid) {
+      havePermission = true;
+    } else {
+      const collaborator = await prisma_client.collaborators.findFirst({
+        where: {
+          userId: uid,
+          workspaceId: workspaceId,
+        },
+      });
+      if (collaborator) havePermission = true;
+    }
+
+    if (workspace && workspace?.folders?.length) {
+      await Promise.all(
+        workspace.folders.map(async (folder, index) => {
+          const subFolders = await FolderService.getNestedFolders(
+            workspaceId,
+            folder.id,
+          );
+          workspace.folders[index].folders = subFolders;
+          return subFolders;
+        }),
+      );
+    }
+
+    if (!havePermission) {
+      throw createError({
+        status: 403,
+        message: 'Not have permission',
+      });
+    }
+
+    return workspace;
   }
 
   export async function getAllWorkspaces(userId: string) {
@@ -51,9 +136,9 @@ export namespace WorkspaceService {
   }
 
   export async function getPrivateWorkspaces(userId: string) {
-    // const workspaces: Workspaces[] = await prisma_client.$queryRaw`
+    // const workspaces: workspaces[] = await prisma_client.$queryRaw`
     //   SELECT w.*
-    //   FROM "Workspaces" w
+    //   FROM "workspaces" w
     //   LEFT JOIN "Collaborators" c ON w.id = c."workspaceId"
     //   WHERE c."workspaceId" IS NULL
     //   AND w."workspaceOwner" = ${userId}::uuid
@@ -62,7 +147,7 @@ export namespace WorkspaceService {
     const workspaces = await prisma_client.workspaces.findMany({
       where: {
         workspaceOwner: userId,
-        Collaborators: {
+        collaborators: {
           none: {},
         },
       },
@@ -76,8 +161,8 @@ export namespace WorkspaceService {
       Prisma.sql`
       SELECT w.*
       FROM users u
-      INNER JOIN "Collaborators" c ON c."userId" = u.id
-      INNER JOIN "Workspaces" w ON c."workspaceId" = w.id
+      INNER JOIN "collaborators" c ON c."userId" = u.id
+      INNER JOIN "workspaces" w ON c."workspaceId" = w.id
       WHERE u.id = ${userId}::uuid
       `,
     );
@@ -90,8 +175,8 @@ export namespace WorkspaceService {
       Prisma.sql`
       SELECT DISTINCT w.*
       FROM users u
-      INNER JOIN "Collaborators" c ON c."userId" = u.id
-      INNER JOIN "Workspaces" w ON c."workspaceId" = w.id
+      INNER JOIN "collaborators" c ON c."userId" = u.id
+      INNER JOIN "workspaces" w ON c."workspaceId" = w.id
       WHERE w."workspaceOwner" = ${userId}::uuid
       `,
     );

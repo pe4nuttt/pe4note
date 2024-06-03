@@ -308,70 +308,6 @@ model auth_users {
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model Collaborators {
-  id          String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  created_at  DateTime      @default(now()) @db.Timestamptz(6)
-  workspaceId String?       @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId      String?       @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  users       public_users? @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  Workspaces  Workspaces?   @relation(fields: [workspaceId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@schema("public")
-}
-
-model Files {
-  id          String     @id @db.Uuid
-  created_at  DateTime   @default(now()) @db.Timestamptz(6)
-  title       String
-  iconId      String
-  data        String?
-  inTrash     String?
-  bannerUrl   String?
-  workspaceId String     @db.Uuid
-  folderId    String     @db.Uuid
-  Folders     Folders    @relation(fields: [folderId], references: [id], onDelete: Cascade)
-  Workspaces  Workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-
-  @@schema("public")
-}
-
-model Folders {
-  id             String     @id @db.Uuid
-  created_at     DateTime   @default(now()) @db.Timestamptz(6)
-  title          String
-  iconId         String
-  data           String?
-  inTrash        String?
-  bannerUrl      String?
-  workspaceId    String     @db.Uuid
-  parentFolderId String?    @db.Uuid
-  Files          Files[]
-  Folders        Folders?   @relation("FoldersToFolders", fields: [parentFolderId], references: [id])
-  other_Folders  Folders[]  @relation("FoldersToFolders")
-  Workspaces     Workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-
-  @@schema("public")
-}
-
-model Workspaces {
-  id             String          @id @db.Uuid
-  created_at     DateTime        @default(now()) @db.Timestamptz(6)
-  title          String
-  iconId         String
-  data           String?
-  inTrash        String?
-  logo           String?
-  bannerUrl      String?
-  workspaceOwner String?         @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  Collaborators  Collaborators[]
-  Files          Files[]
-  Folders        Folders[]
-  users          public_users?   @relation(fields: [workspaceOwner], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@schema("public")
-}
-
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model customers {
   id                 String     @id @db.Uuid
   stripe_customer_id String?
@@ -445,11 +381,75 @@ model public_users {
   updated_at      DateTime?       @db.Timestamptz(6)
   payment_method  Json?
   email           String?
-  Collaborators   Collaborators[]
-  Workspaces      Workspaces[]
+  collaborators   collaborators[]
   users           auth_users      @relation(fields: [id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  workspaces      workspaces[]
 
   @@map("users")
+  @@schema("public")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model collaborators {
+  id          String        @id(map: "Collaborators_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at  DateTime      @default(now()) @db.Timestamptz(6)
+  workspaceId String?       @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId      String?       @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  users       public_users? @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "Collaborators_userId_fkey")
+  workspaces  workspaces?   @relation(fields: [workspaceId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "Collaborators_workspaceId_fkey")
+
+  @@schema("public")
+}
+
+model files {
+  id          String     @id(map: "Files_pkey") @db.Uuid
+  created_at  DateTime   @default(now()) @db.Timestamptz(6)
+  title       String
+  iconId      String
+  data        String?
+  inTrash     String?
+  bannerUrl   String?
+  workspaceId String     @db.Uuid
+  folderId    String?    @db.Uuid
+  folders     folders?   @relation(fields: [folderId], references: [id], onDelete: Cascade, map: "Files_folderId_fkey")
+  workspaces  workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade, map: "Files_workspaceId_fkey")
+
+  @@schema("public")
+}
+
+model folders {
+  id             String     @id(map: "Folders_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at     DateTime   @default(now()) @db.Timestamptz(6)
+  title          String
+  iconId         String
+  data           String?
+  inTrash        String?
+  bannerUrl      String?
+  workspaceId    String     @db.Uuid
+  parentFolderId String?    @db.Uuid
+  files          files[]
+  folders        folders?   @relation("foldersTofolders", fields: [parentFolderId], references: [id], map: "Folders_parentFolderId_fkey")
+  other_folders  folders[]  @relation("foldersTofolders")
+  workspaces     workspaces @relation(fields: [workspaceId], references: [id], onDelete: Cascade, map: "Folders_workspaceId_fkey")
+
+  @@schema("public")
+}
+
+model workspaces {
+  id             String          @id(map: "Workspaces_pkey") @db.Uuid
+  created_at     DateTime        @default(now()) @db.Timestamptz(6)
+  title          String
+  iconId         String
+  data           String?
+  inTrash        String?
+  logo           String?
+  bannerUrl      String?
+  workspaceOwner String?         @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  collaborators  collaborators[]
+  files          files[]
+  folders        folders[]
+  users          public_users?   @relation(fields: [workspaceOwner], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "Workspaces_workspaceOwner_fkey")
+
   @@schema("public")
 }
 
