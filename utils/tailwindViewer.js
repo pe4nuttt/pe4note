@@ -1,6 +1,6 @@
 import fs from 'fs';
 function extractRootVariables(filePath = './assets/styles/tailwind.scss') {
-  const cssFile = fs.readFileSync(filePath, 'utf-8'); // Read the CSS file
+  const cssFile = fs.readFileSync(filePath, 'utf-8'); // Read the CSS File
 
   const rootVariables = new Map();
 

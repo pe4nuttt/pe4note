@@ -22,6 +22,7 @@ module.exports = {
     `./Error.{js,ts,vue}`,
     `./error.{js,ts,vue}`,
     `./app.config.{js,ts}`,
+    './assets/mypreset/**/*.{js,vue,ts}',
   ],
   theme: {
     container: {

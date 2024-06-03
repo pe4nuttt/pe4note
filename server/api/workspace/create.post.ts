@@ -1,6 +1,6 @@
 import * as z from 'zod';
 import prisma_client from '~/prisma/prisma.client';
-import type { Workspaces } from '@prisma/client';
+import type { workspaces } from '@prisma/client';
 import { WorkspaceService } from '~/lib/services/workspace.service';
 import { Workspace } from '~/lib/services/service.type';
 

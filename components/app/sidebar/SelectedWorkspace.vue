@@ -10,7 +10,7 @@
       "
       :to="`/dashboard/${workspace.id}`"
     >
-      <div class="flex items-center flex-1">
+      <div class="flex items-center flex-1 overflow-hidden">
         <NuxtImg
           :src="workspaceLogo"
           alt="workspace logo"
@@ -18,17 +18,15 @@
           :height="20"
           objectFit="cover"
         />
-        <div class="flex flex-col ml-3">
-          <p
-            class="text-base overflow-hidden overflow-ellipsis whitespace-nowrap"
-          >
-            {{ workspace.title }}
-          </p>
-        </div>
+        <p
+          class="ml-3 text-left flex-1 text-base overflow-hidden overflow-ellipsis whitespace-nowrap"
+        >
+          {{ workspace.title }}
+        </p>
       </div>
       <Icon name="ion:chevron-expand-outline" class="text-foreground"></Icon>
     </nuxt-link>
-    <!-- {{ workspace }} -->
+    <!-- {{ Workspace }} -->
   </div>
 </template>
 
@@ -50,10 +48,10 @@ const supabase = useSupabaseClient();
 
 // Computed
 const workspaceLogo = computed(() => {
-  // if (workspace.logo) {
+  // if (Workspace.logo) {
   //   const path = supabase.storage
-  //     .from('workspace-logos')
-  //     .getPublicUrl(workspace.logo)?.data.publicUrl;
+  //     .from('Workspace-logos')
+  //     .getPublicUrl(Workspace.logo)?.data.publicUrl;
   //   console.log('[LOGO]', path);
   //   return path;
   // }

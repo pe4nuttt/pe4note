@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import type { GetWorkspaceListType } from '~/lib/services/service.type';
 import type { AppWorkspaceType } from '~/lib/types';
 
-export const useWorkspaceListStore = defineStore('workspace', () => {
+export const useWorkspaceListStore = defineStore('workspaceList', () => {
   const { apiFetch } = useBaseFetch();
 
   // const userStore = useUserStore();

@@ -1,6 +1,6 @@
 <template>
-  <div class="p-4">
-    <div>
+  <div class="py-4 flex flex-col">
+    <div class="flex-1 flex flex-col overflow-hidden">
       <WorkspaceDropdown
         :privateWorkspaces="(workspaceListStore.privateWorkspaces as Workspace[])"
         :collaboratingWorkspaces="(workspaceListStore.collaboratingWorkspaces as Workspace[])"
@@ -14,14 +14,31 @@
               ].find(item => item.id === workspaceId)
             : null
         "
+        class="px-2"
       />
+      <PlanUsage class="mt-4 px-2 text-sm" :subscription="subscriptionData" />
+
+      <NativeNavigation class="mt-4 px-2 text-sm" />
+
+      <div class="pl-3 mt-2 mb-1 text-sm text-muted-foreground">Pages</div>
+      <ScrollArea class="w-full rounded-md flex-1">
+        <SidebarNavigation class="px-2 text-sm flex-1 flex overflow-hidden" />
+      </ScrollArea>
     </div>
+
+    <!-- Action -->
+    <SidebarActions />
   </div>
 </template>
 
 <script setup lang="ts">
+import { ScrollArea } from '@/components/ui/scroll-area';
 import type { Workspace } from '~/lib/services/service.type';
 import WorkspaceDropdown from './WorkspaceDropdown.vue';
+import PlanUsage from './PlanUsage.vue';
+import SidebarActions from './SidebarActions.vue';
+import SidebarNavigation from './SidebarNavigation/index.vue';
+import NativeNavigation from './NativeNavigation.vue';
 interface Props {
   workspaceId: string;
 }

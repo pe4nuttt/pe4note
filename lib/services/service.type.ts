@@ -1,14 +1,21 @@
 import { Prisma } from '@prisma/client';
-import type { Workspaces, Files, public_users, Folders } from '@prisma/client';
+import type {
+  workspaces,
+  files,
+  public_users,
+  folders,
+  subscriptions,
+} from '@prisma/client';
 
 // export const
 // export const worksapce = Prisma.validator
 
 export type {
-  Workspaces as Workspace,
-  Files as File,
+  workspaces as Workspace,
+  files as File,
   public_users as User,
-  Folders as Folder,
+  folders as Folder,
+  subscriptions as Subscription,
 };
 
 // const user = Prisma.validator<Prisma.public_usersDefaultArgs>()({});

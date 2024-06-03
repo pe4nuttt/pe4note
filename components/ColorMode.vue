@@ -1,7 +1,7 @@
 <template>
   <div>
     <div>COLOR:: {{ colorMode.value }}</div>
-    <Button @click="toggleTheme"> Toggle Color </Button>
+    <Button id="toggle-theme" @click="toggleTheme"> Toggle Color </Button>
   </div>
 </template>
 
