@@ -1,6 +1,6 @@
 <template>
   <div class="py-4 flex flex-col">
-    <div class="flex-1 flex flex-col overflow-hidden">
+    <div class="flex-1 flex flex-col overflow-hidden mb-4">
       <WorkspaceDropdown
         :privateWorkspaces="(workspaceListStore.privateWorkspaces as Workspace[])"
         :collaboratingWorkspaces="(workspaceListStore.collaboratingWorkspaces as Workspace[])"
@@ -28,6 +28,8 @@
 
     <!-- Action -->
     <SidebarActions />
+
+    <DataListener />
   </div>
 </template>
 
@@ -39,6 +41,7 @@ import PlanUsage from './PlanUsage.vue';
 import SidebarActions from './SidebarActions.vue';
 import SidebarNavigation from './SidebarNavigation/index.vue';
 import NativeNavigation from './NativeNavigation.vue';
+import DataListener from './DataListener.vue';
 interface Props {
   workspaceId: string;
 }
@@ -48,22 +51,29 @@ const props = defineProps<Props>();
 const { apiFetch } = useBaseFetch();
 // user
 const userStore = useUserStore();
+// const user = useSupabaseUser();
 const userId = computed(() => {
   return userStore.user?.id || '';
+  // return user.value?.id || '';
 });
 
 const workspaceListStore = useWorkspaceListStore();
 
-useAsyncData(
+await useAsyncData(
   'workspaceList',
-  () => workspaceListStore.fetchWorkspaces().then(() => true),
+  () =>
+    workspaceListStore
+      .fetchWorkspaces()
+      .then(() => true)
+      .catch(error => alert(error)),
   {
     watch: [userId],
+    immediate: true,
   },
 );
 
 // subscription status
-const { data: subscriptionData, error: subscriptionError } = useAsyncData(
+const { data: subscriptionData, error: subscriptionError } = await useAsyncData(
   () => getUserSubscriptionStatus(userId.value),
   {
     watch: [userId],

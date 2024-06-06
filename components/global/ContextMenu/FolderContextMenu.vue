@@ -12,7 +12,7 @@
   <RenameDialog
     v-model="showRename"
     :data="{
-      name: folderContextMenu?.folder?.title,
+      name: folderContextMenu?.folder?.title as string,
       iconId: folderContextMenu?.folder?.iconId,
     }"
     :float-wrapper-id="renameFloatWrapperId"
@@ -25,10 +25,14 @@ import ContextMenu from 'primevue/contextmenu';
 import type { ContextMenuProps } from 'primevue/contextmenu';
 import type { Folder } from '~/lib/services/service.type';
 import RenameDialog from '../RenameDialog.vue';
+import { updateFolderTitleEmoji } from '~/lib/datastore';
+import { useToast } from '~/components/ui/toast';
 
+const { toast } = useToast();
 const contextMenuStore = useContextMenuStore();
 const { folderContextMenu } = storeToRefs(contextMenuStore);
 const folderContextMenuRef = ref();
+const workspaceStore = useWorkspaceStore();
 
 // Data
 const showRename = ref(false);
@@ -80,8 +84,28 @@ const handleOpenRenameDialog = (folder: Folder, wrapperId: string) => {
   // Get Folder sidebar ID ->
 };
 
-const handleRenameFolder = (value: { emoji: ''; title: '' }) => {
-  alert(JSON.stringify(value));
+const handleRenameFolder = async (value: { emoji: ''; title: '' }) => {
+  const folderId = folderContextMenu.value?.folder?.id;
+  if (folderId) {
+    try {
+      const res = await updateFolderTitleEmoji({
+        folderId: folderId,
+        newEmoji: value.emoji,
+        newTitle: value.title,
+      });
+      // Update data
+      // workspaceStore.updateWorkspaceFolder(folderId, res);
+      console.log('[RES] ', res);
+    } catch (error) {
+      console.log('[ERROR] handleRenameFolder', error);
+      toast({
+        title: 'Error',
+        description:
+          error instanceof Error ? error.message : 'Something went wrong',
+        variant: 'destructive',
+      });
+    }
+  }
 };
 
 const items = ref<ContextMenuProps['model']>([

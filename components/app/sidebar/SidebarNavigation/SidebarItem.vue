@@ -37,7 +37,7 @@
       </div>
       <!-- Title -->
       <div class="flex-1 overflow-hidden text-ellipsis whitespace-nowrap">
-        {{ item.title }}
+        {{ item.title || 'Untitled' }}
       </div>
 
       <!-- Action -->
@@ -81,7 +81,7 @@ import Test from '~/components/global/ContextMenu/Test.vue';
 
 interface Props {
   item: AppFolderType;
-  level: number;
+  level?: number;
   isShown?: boolean;
 }
 

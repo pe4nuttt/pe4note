@@ -1,5 +1,6 @@
 import { useSupabaseClient } from '#imports';
-import type { Folder, User } from './services/service.type';
+import type { File, Folder, User } from './services/service.type';
+import type { Database } from './supabase/supabase.types';
 
 export const getUsersFromSearch = async (emailKey: string): Promise<User[]> => {
   const supabase = useSupabaseClient();
@@ -18,16 +19,19 @@ export const getUsersFromSearch = async (emailKey: string): Promise<User[]> => {
   return data;
 };
 
-export const updateFolderTitle = async (
-  folderId: string,
-  newTitle: string,
-): Promise<Folder> => {
-  const supabase = useSupabaseClient();
+export const updateFolderTitleEmoji = async (params: {
+  folderId: string;
+  newTitle: string;
+  newEmoji: string;
+}): Promise<Folder> => {
+  const supabase = useSupabaseClient<Database>();
+  const { folderId, newTitle, newEmoji } = params;
 
   const { data, error } = await supabase
     .from('folders')
     .update({
       title: newTitle,
+      iconId: newEmoji,
     })
     .eq('id', folderId)
     .select();
@@ -36,5 +40,50 @@ export const updateFolderTitle = async (
     throw error;
   }
 
-  return data;
+  if (!data?.length) {
+    throw new Error('Not Found');
+  }
+
+  return {
+    ...data[0],
+    created_at: new Date(data[0].created_at),
+  };
+};
+
+export const addNewFolder = async (folderData: Folder) => {
+  const supabase = useSupabaseClient<Database>();
+
+  const { data, error } = await supabase
+    .from('folders')
+    .insert(
+      folderData as Folder & {
+        created_at: string;
+      },
+    )
+    .select();
+
+  if (error) {
+    throw error;
+  }
+
+  return data?.[0];
+};
+
+export const addNewFile = async (fileData: File) => {
+  const supabase = useSupabaseClient<Database>();
+
+  const { data, error } = await supabase
+    .from('files')
+    .insert(
+      fileData as File & {
+        created_at: string;
+      },
+    )
+    .select();
+
+  if (error) {
+    throw error;
+  }
+
+  return data?.[0];
 };
