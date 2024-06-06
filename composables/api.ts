@@ -2,6 +2,7 @@ import { string } from 'zod';
 import type {
   Folder,
   GetWorkspaceListType,
+  Subscription,
   Workspace,
 } from '~/lib/services/service.type';
 import type { AppWorkspaceType } from '~/lib/types';
@@ -29,7 +30,7 @@ export const getWorkspaceFoldersApi = async (
 
 export const getUserSubscriptionStatus = async (
   userId: string,
-): Promise<Folder> => {
+): Promise<Subscription> => {
   const { apiFetch } = useBaseFetch();
 
   return await apiFetch(`/subscription/user/${userId}`, {

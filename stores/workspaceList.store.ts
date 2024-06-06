@@ -53,16 +53,19 @@ export const useWorkspaceListStore = defineStore('workspaceList', () => {
         privateWorkspacesData?.map(workspace => ({
           ...workspace,
           folders: [],
+          files: [],
         })) || [];
       sharedWorkspaces.value =
         sharedWorkspacesData?.map(workspace => ({
           ...workspace,
           folders: [],
+          files: [],
         })) || [];
       collaboratingWorkspaces.value =
         collaboratingWorkspacesData?.map(workspace => ({
           ...workspace,
           folders: [],
+          files: [],
         })) || [];
     } catch (error) {
       console.log('[ERROR] fetchWorkspaces', error);

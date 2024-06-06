@@ -10,7 +10,7 @@
     </div>
     <!-- Title -->
     <div class="flex-1 overflow-hidden text-ellipsis whitespace-nowrap">
-      {{ item.title }}
+      {{ item.title || 'Untitled' }}
     </div>
 
     <!-- Action -->
@@ -27,7 +27,7 @@ import type { File } from '~/lib/services/service.type';
 
 interface Props {
   item: File;
-  level: number;
+  level?: number;
 }
 
 const props = withDefaults(defineProps<Props>(), {

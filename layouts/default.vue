@@ -45,18 +45,31 @@ import {
 
 const route = useRoute();
 const workspaceStore = useWorkspaceStore();
-watch(
-  () => route.params.workspaceId,
-  val => {
-    console.log('WATCH ROUTE PARAMS::', val);
-    if (val) {
-      workspaceStore.fetchCurrentWorkspace(val as string);
-    }
-  },
+
+await useAsyncData(
+  'currentWorkspaceData',
+  () =>
+    workspaceStore
+      .fetchCurrentWorkspace(route.params.workspaceId as string)
+      .then(() => true),
   {
+    watch: [() => route.params.workspaceId || ''],
     immediate: true,
   },
 );
+
+// watch(
+//   () => route.params.workspaceId,
+//   val => {
+//     console.log('WATCH ROUTE PARAMS::', val);
+//     if (val) {
+//       workspaceStore.fetchCurrentWorkspace(val as string);
+//     }
+//   },
+//   {
+//     immediate: true,
+//   },
+// );
 </script>
 
 <style scoped></style>

@@ -96,9 +96,7 @@ watch(
   async value => {
     emojiInput.value = props.data.iconId || '';
     nameInput.value = props.data.name || '';
-
     await nextTick();
-
     if (value) {
       updatePosition();
     } else {
