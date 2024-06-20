@@ -19,6 +19,9 @@ export namespace FolderService {
       include: {
         files: true,
       },
+      orderBy: {
+        created_at: 'asc',
+      },
     });
 
     folders.forEach(async (folder, index) => {

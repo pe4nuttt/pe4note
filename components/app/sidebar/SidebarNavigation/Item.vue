@@ -1,5 +1,6 @@
 <template>
   <div
+    :id="`sidebarItem__file-${props.item.id}`"
     :class="`flex items-center pr-2 py-[6px] group/sidebar-item hover:bg-muted rounded-md dark:text-muted-foreground`"
     :style="{ 'padding-left': `${level * 8}px` }"
     @contextmenu="openFileContextMenu"
@@ -16,6 +17,7 @@
     <!-- Action -->
     <div
       class="ml-2 hidden group-hover/sidebar-item:inline-flex selection:cursor-pointer dark:text-muted-foreground items-center hover:bg-neutral-700 rounded-sm px-1"
+      @click="openFileContextMenu"
     >
       <Icon name="lucide:ellipsis" color="currentColor" size="16px"></Icon>
     </div>
@@ -39,10 +41,15 @@ const item = toRef(props, 'item');
 // Store
 const contextMenuStore = useContextMenuStore();
 
+// Computed
+const wrapperId = computed(() => {
+  return 'sidebarItem__file-' + item.value.id;
+});
+
 // Methods
 const openFileContextMenu = (e: MouseEvent) => {
   e.preventDefault();
-  contextMenuStore.onFileContextMenu(e, props.item);
+  contextMenuStore.onFileContextMenu(e, props.item, wrapperId.value);
 };
 </script>
 

@@ -43,6 +43,7 @@
       <!-- Action -->
       <div
         class="ml-2 hidden group-hover/sidebar-item:inline-flex selection:cursor-pointer dark:text-muted-foreground items-center hover:bg-neutral-700 rounded-sm px-1"
+        @click="openFolderContextMenu"
       >
         <Icon name="lucide:ellipsis" color="currentColor" size="16px"></Icon>
       </div>
@@ -95,6 +96,7 @@ const item = toRef(props, 'item');
 
 // Store
 const contextMenuStore = useContextMenuStore();
+const workspaceStore = useWorkspaceStore();
 
 // Data
 const isOpened = ref(false);
@@ -110,6 +112,14 @@ watch(isShown, val => {
     isOpened.value = false;
   }
 });
+watch(
+  () => workspaceStore.recentAddedParentFolderId,
+  value => {
+    if (item.value.id === value) {
+      isOpened.value = true;
+    }
+  },
+);
 
 // Methods
 const openFolderContextMenu = (e: MouseEvent) => {

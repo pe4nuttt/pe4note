@@ -53,10 +53,23 @@ export namespace WorkspaceService {
           where: {
             parentFolderId: null,
           },
+          orderBy: {
+            created_at: 'asc',
+          },
+          include: {
+            files: {
+              orderBy: {
+                created_at: 'asc',
+              },
+            },
+          },
         },
         files: {
           where: {
             folderId: null,
+          },
+          orderBy: {
+            created_at: 'asc',
           },
         },
       },
