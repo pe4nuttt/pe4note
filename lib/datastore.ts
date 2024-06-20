@@ -50,6 +50,64 @@ export const updateFolderTitleEmoji = async (params: {
   };
 };
 
+export const updateFolder = async (
+  params: Partial<Folder> & { id: string },
+): Promise<
+  | (
+      | Folder
+      | {
+          created_at: string;
+        }
+    )
+  | null
+  | undefined
+> => {
+  const supabase = useSupabaseClient<Database>();
+  const { data, error } = await supabase
+    .from('folders')
+    .update({
+      ...(params as Folder & {
+        created_at: string;
+      }),
+    })
+    .eq('id', params.id)
+    .select();
+  if (error) {
+    throw error;
+  }
+
+  return data?.[0];
+};
+
+export const updateFile = async (
+  params: Partial<File> & { id: string },
+): Promise<
+  | (
+      | File
+      | {
+          created_at: string;
+        }
+    )
+  | null
+  | undefined
+> => {
+  const supabase = useSupabaseClient<Database>();
+  const { data, error } = await supabase
+    .from('files')
+    .update({
+      ...(params as File & {
+        created_at: string;
+      }),
+    })
+    .eq('id', params.id)
+    .select();
+  if (error) {
+    throw error;
+  }
+
+  return data?.[0];
+};
+
 export const addNewFolder = async (folderData: Folder) => {
   const supabase = useSupabaseClient<Database>();
 

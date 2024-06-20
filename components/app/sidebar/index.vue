@@ -59,30 +59,32 @@ const userId = computed(() => {
 
 const workspaceListStore = useWorkspaceListStore();
 
-await useAsyncData(
+const { refresh: refreshWorkspaceList } = await useAsyncData(
   'workspaceList',
   () =>
     workspaceListStore
       .fetchWorkspaces()
       .then(() => true)
       .catch(error => alert(error)),
-  {
-    watch: [userId],
-    immediate: true,
-  },
 );
 
 // subscription status
-const { data: subscriptionData, error: subscriptionError } = await useAsyncData(
-  () => getUserSubscriptionStatus(userId.value),
-  {
-    watch: [userId],
-  },
-);
+const {
+  data: subscriptionData,
+  refresh: resetSubscriptionData,
+  error: subscriptionError,
+} = await useAsyncData(() => getUserSubscriptionStatus(userId.value));
 
 // folders
-const { data: workspaceFolders, error: foldersError } = useAsyncData(() =>
-  getWorkspaceFoldersApi(props.workspaceId),
+const {
+  data: workspaceFolders,
+  refresh: resetWorkspaceFolders,
+  error: foldersError,
+} = await useAsyncData(
+  () => getWorkspaceFoldersApi(props.workspaceId as string),
+  {
+    watch: [() => props.workspaceId],
+  },
 );
 
 if (subscriptionError || foldersError) {
@@ -111,6 +113,16 @@ watch(
   },
   {
     deep: true,
+  },
+);
+
+watch(
+  [userId],
+  async () => {
+    await Promise.all([resetSubscriptionData(), refreshWorkspaceList()]);
+  },
+  {
+    immediate: true,
   },
 );
 

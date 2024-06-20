@@ -5,7 +5,7 @@ export const useContextMenuStore = defineStore('contextMenuStore', () => {
   const folderContextMenu = ref<{
     folder: Folder | null;
     event: MouseEvent | null;
-    wrapperId?: string | null;
+    wrapperId?: string | null; // Folder sidebar element id
   }>();
 
   const onFolderContextMenu = (
@@ -23,12 +23,18 @@ export const useContextMenuStore = defineStore('contextMenuStore', () => {
   const fileContextMenu = ref<{
     file: File | null;
     event: MouseEvent | null;
+    wrapperId?: string | null; // File sidebar element id
   }>();
 
-  const onFileContextMenu = (event: MouseEvent, file: File) => {
+  const onFileContextMenu = (
+    event: MouseEvent,
+    file: File,
+    wrapperId?: string,
+  ) => {
     fileContextMenu.value = {
       file,
       event,
+      wrapperId: wrapperId,
     };
   };
 

@@ -23,16 +23,18 @@
 <script setup lang="ts">
 import ContextMenu from 'primevue/contextmenu';
 import type { ContextMenuProps } from 'primevue/contextmenu';
-import type { Folder } from '~/lib/services/service.type';
+import type { File, Folder } from '~/lib/services/service.type';
 import RenameDialog from '../RenameDialog.vue';
-import { updateFolderTitleEmoji } from '~/lib/datastore';
+import { addNewFolder, updateFolderTitleEmoji } from '~/lib/datastore';
 import { useToast } from '~/components/ui/toast';
+import { v4 as uuidv4 } from 'uuid';
 
 const { toast } = useToast();
 const contextMenuStore = useContextMenuStore();
 const { folderContextMenu } = storeToRefs(contextMenuStore);
 const folderContextMenuRef = ref();
 const workspaceStore = useWorkspaceStore();
+const user = useSupabaseUser();
 
 // Data
 const showRename = ref(false);
@@ -84,6 +86,77 @@ const handleOpenRenameDialog = (folder: Folder, wrapperId: string) => {
   // Get Folder sidebar ID ->
 };
 
+const handleAddSubFolder = async () => {
+  if (!workspaceStore.workspace?.id) {
+    return;
+  }
+
+  try {
+    const payload: Folder = {
+      id: uuidv4(),
+      workspaceId: workspaceStore.workspace.id,
+      bannerUrl: null,
+      created_at: new Date(),
+      data: null,
+      iconId: '💼',
+      inTrash: null,
+      ownerId: user.value?.id as string,
+      parentFolderId: folderContextMenu.value?.folder?.id as string,
+      title: '',
+    };
+
+    // await addNewFolder(payload);
+    await workspaceStore.handleCreateNewFolder(payload);
+
+    toast({
+      title: 'Success',
+      description: 'Added new Folder',
+      variant: 'success',
+    });
+  } catch (error) {
+    toast({
+      title: 'Error',
+      description:
+        error instanceof Error ? error.message : 'Something went wrong',
+      variant: 'destructive',
+    });
+  }
+};
+
+const handleAddSubFile = async () => {
+  if (!workspaceStore.workspace?.id) {
+    return;
+  }
+  try {
+    const payload: File = {
+      id: uuidv4(),
+      workspaceId: workspaceStore.workspace.id,
+      bannerUrl: null,
+      created_at: new Date(),
+      data: null,
+      iconId: '🗒️',
+      inTrash: null,
+      ownerId: user.value?.id as string,
+      folderId: folderContextMenu.value?.folder?.id as string,
+      title: '',
+    };
+    await workspaceStore.handleCreateNewFile(payload);
+
+    toast({
+      title: 'Success',
+      description: 'Added new File',
+      variant: 'success',
+    });
+  } catch (error) {
+    toast({
+      title: 'Error',
+      description:
+        error instanceof Error ? error.message : 'Something went wrong',
+      variant: 'destructive',
+    });
+  }
+};
+
 const handleRenameFolder = async (value: { emoji: ''; title: '' }) => {
   const folderId = folderContextMenu.value?.folder?.id;
   if (folderId) {
@@ -112,10 +185,16 @@ const items = ref<ContextMenuProps['model']>([
   {
     label: 'New File',
     icon: 'ph:file-plus-fill',
+    command: () => {
+      handleAddSubFile();
+    },
   },
   {
     label: 'New Folder',
     icon: 'ph:folder-simple-plus-fill',
+    command: () => {
+      handleAddSubFolder();
+    },
   },
   {
     label: 'Rename',
