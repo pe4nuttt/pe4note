@@ -3,7 +3,9 @@
     <div
       :id="`sidebarItem__folder-${props.item.id}`"
       :class="[
-        `flex items-center pr-2 py-[6px] group/sidebar-item hover:!bg-muted rounded-md dark:text-muted-foreground`,
+        `flex items-center pr-2 py-[6px] group/sidebar-item hover:!bg-muted rounded-md dark:text-muted-foreground 
+          dark:hover:text-white
+        `,
         {
           'bg-muted/40 folder-context-menu-opening': isOpenContextMenu,
         },
