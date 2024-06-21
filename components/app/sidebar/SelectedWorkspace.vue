@@ -4,8 +4,8 @@
     <nuxt-link
       :class="
         cn(
-          buttonVariants({ variant: 'outline', size: 'default' }),
-          'flex w-full h-9 justify-start items-center dark:text-white hover:bg-muted',
+          buttonVariants({ variant: 'ghost', size: 'default' }),
+          'flex w-full h-10 justify-start items-center dark:text-white bg-tab-bg-color hover:bg-muted',
         )
       "
       :to="`/dashboard/${workspace.id}`"

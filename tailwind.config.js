@@ -37,6 +37,7 @@ module.exports = {
         'sidebar-bg-color': 'var(--sidebar-bg-color)',
         'header-bg-color': 'var(--header-bg-color)',
         'app-bg-color': 'var(--app-bg-color)',
+        'tab-bg-color': 'var(--tab-bg-color)',
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',

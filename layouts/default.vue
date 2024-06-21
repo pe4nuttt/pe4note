@@ -2,7 +2,7 @@
   <!-- bg-[#27313d] -->
   <div
     id="app-panel"
-    class="w-screen h-screen overflow-hidden flex flex-col bg-app-bg-color"
+    class="w-screen h-screen overflow-hidden flex flex-col bg-app-bg-color !bg-background"
   >
     <div class="h-11">
       App Header
@@ -32,7 +32,7 @@
         :min-size="30"
         :default-size="80"
       >
-        <div className="bg-background h-full w-full rounded-xl">
+        <div className="bg-tab-bg-color h-full w-full rounded-xl">
           <slot />
         </div>
       </ResizablePanel>

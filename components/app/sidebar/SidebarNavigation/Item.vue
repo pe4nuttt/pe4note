@@ -1,7 +1,7 @@
 <template>
   <div
     :id="`sidebarItem__file-${props.item.id}`"
-    :class="`flex items-center pr-2 py-[6px] group/sidebar-item hover:bg-muted rounded-md dark:text-muted-foreground`"
+    :class="`flex items-center pr-2 py-[6px] group/sidebar-item hover:bg-muted rounded-md dark:text-muted-foreground dark:hover:text-white`"
     :style="{ 'padding-left': `${level * 8}px` }"
     @contextmenu="openFileContextMenu"
   >
