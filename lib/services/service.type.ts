@@ -1,9 +1,9 @@
 import { Prisma } from '@prisma/client';
 import type {
   workspaces,
-  files,
+  documents,
   public_users,
-  folders,
+  collections,
   subscriptions,
 } from '@prisma/client';
 
@@ -12,9 +12,9 @@ import type {
 
 export type {
   workspaces as Workspace,
-  files as File,
+  documents as Document,
   public_users as User,
-  folders as Folder,
+  collections as Collection,
   subscriptions as Subscription,
 };
 
