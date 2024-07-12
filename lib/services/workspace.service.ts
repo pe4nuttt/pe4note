@@ -49,29 +49,49 @@ export namespace WorkspaceService {
             users: true,
           },
         },
-        folders: {
-          where: {
-            parentFolderId: null,
-          },
+        collections: {
           orderBy: {
             created_at: 'asc',
           },
           include: {
-            files: {
+            documents: {
               orderBy: {
                 created_at: 'asc',
               },
             },
           },
         },
-        files: {
+        documents: {
           where: {
-            folderId: null,
+            collectionId: null,
           },
           orderBy: {
             created_at: 'asc',
           },
         },
+        // folders: {
+        //   where: {
+        //     parentFolderId: null,
+        //   },
+        //   orderBy: {
+        //     created_at: 'asc',
+        //   },
+        //   include: {
+        //     files: {
+        //       orderBy: {
+        //         created_at: 'asc',
+        //       },
+        //     },
+        //   },
+        // },
+        // files: {
+        //   where: {
+        //     folderId: null,
+        //   },
+        //   orderBy: {
+        //     created_at: 'asc',
+        //   },
+        // },
       },
     });
 
