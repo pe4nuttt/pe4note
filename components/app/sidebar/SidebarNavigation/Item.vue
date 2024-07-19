@@ -49,7 +49,7 @@ const wrapperId = computed(() => {
 // Methods
 const openFileContextMenu = (e: MouseEvent) => {
   e.preventDefault();
-  contextMenuStore.onFileContextMenu(e, props.item, wrapperId.value);
+  contextMenuStore.onDocumentContextMenu(e, props.item, wrapperId.value);
 };
 </script>
 

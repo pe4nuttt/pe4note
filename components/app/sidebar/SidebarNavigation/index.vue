@@ -1,11 +1,18 @@
 <template>
   <div class="flex flex-col gap-1">
     <SidebarItem
-      v-for="folder in workspace?.folders"
-      :key="folder.id"
-      :item="folder"
+      v-for="collection in workspace?.collections"
+      :key="collection.id"
+      :item="collection"
+      type="collection"
     />
-    <Item v-for="file in workspace?.files" :key="file.id" :item="file" />
+    <SidebarItem
+      v-for="document in workspace?.documents"
+      :key="document.id"
+      :item="document"
+      type="document"
+    />
+    <!-- <Item v-for="file in workspace?.files" :key="file.id" :item="file" /> -->
   </div>
 </template>
 

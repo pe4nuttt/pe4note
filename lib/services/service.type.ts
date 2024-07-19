@@ -28,3 +28,19 @@ export enum GetWorkspaceListType {
   PRIVATE = 'private',
   COLLABORATING = 'collaborating',
 }
+
+const workspaceWithCollectionDocuments =
+  Prisma.validator<Prisma.workspacesDefaultArgs>()({
+    include: {
+      collections: {
+        include: {
+          documents: true,
+        },
+      },
+      documents: true,
+    },
+  });
+
+export type WorkspaceWithCollectionDocuments = Prisma.workspacesGetPayload<
+  typeof workspaceWithCollectionDocuments
+>;

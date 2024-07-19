@@ -3,16 +3,16 @@
     <button class="" @contextmenu="onContextMenuFolder">
       Context folder test
     </button>
-    <FolderContextMenu ref="folderContextRef" />
+    <CollectionContextMenu ref="folderContextRef" />
     <button class="" @contextmenu="onContextMenuFile">Context file test</button>
-    <FileContextMenu ref="fileContextRef" />
+    <DocumentContextMenu ref="fileContextRef" />
   </div>
 </template>
 
 <script setup lang="ts">
 import ContextMenu from './index.vue';
-import FolderContextMenu from './FolderContextMenu.vue';
-import FileContextMenu from './FileContextMenu.vue';
+import CollectionContextMenu from './CollectionContextMenu.vue';
+import DocumentContextMenu from './DocumentContextMenu.vue';
 
 const folderContextRef = ref();
 const fileContextRef = ref();
