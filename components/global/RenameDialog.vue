@@ -2,7 +2,7 @@
   <div
     ref="renameDialogRef"
     v-if="modelValue"
-    class="fixed rounded-md py-1 px-2 border border-border bg-popover w-full min-w-60 max-w-[400px] shadow-lg"
+    class="fixed rounded-md py-1 px-2 border border-border bg-popover w-full min-w-60 max-w-[400px] shadow-lg z-10"
     :style="{
       top: `${position.y}px`,
       left: `${position.x}px`,
@@ -24,7 +24,7 @@
         </EmojiPicker>
       </div>
       <Input
-        class="flex-1 h-7 rounded-sm bg-primary-foreground"
+        class="flex-1 h-7 rounded-sm bg-background"
         placeholder="Untitled"
         v-model="nameInput"
       />

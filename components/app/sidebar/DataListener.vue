@@ -6,43 +6,45 @@
 const supabaseClient = useSupabaseClient();
 
 const workspaceListStore = useWorkspaceListStore();
-const folderChangesChannel = supabaseClient
-  .channel('folder-changes-channel')
+const collectionChangesChannel = supabaseClient
+  .channel('collection-changes-channel')
   .on(
     'postgres_changes',
     {
       event: '*',
       schema: 'public',
-      table: 'folders',
+      table: 'collections',
     },
     async payload => {
-      console.log('[FOLDER REALTIME]', payload);
+      console.log('[COLLECTION REALTIME]', payload);
       // Update data
       await refreshNuxtData('currentWorkspaceData');
     },
   );
 
-const fileChangesChannel = supabaseClient.channel('file-changes-channel').on(
-  'postgres_changes',
-  {
-    event: '*',
-    schema: 'public',
-    table: 'files',
-  },
-  async payload => {
-    console.log('[FILE REALTIME]', payload);
-    // Update data
-    await refreshNuxtData('currentWorkspaceData');
-  },
-);
+const documentChangesChannel = supabaseClient
+  .channel('document-changes-channel')
+  .on(
+    'postgres_changes',
+    {
+      event: '*',
+      schema: 'public',
+      table: 'documents',
+    },
+    async payload => {
+      console.log('[DOCUMENT REALTIME]', payload);
+      // Update data
+      await refreshNuxtData('currentWorkspaceData');
+    },
+  );
 onMounted(() => {
-  folderChangesChannel.subscribe();
-  fileChangesChannel.subscribe();
+  collectionChangesChannel.subscribe();
+  documentChangesChannel.subscribe();
 });
 
 onUnmounted(() => {
-  folderChangesChannel.unsubscribe();
-  fileChangesChannel.unsubscribe();
+  collectionChangesChannel.unsubscribe();
+  documentChangesChannel.unsubscribe();
 });
 </script>
 

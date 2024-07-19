@@ -1,13 +1,13 @@
 <template>
   <div>
-    <FolderContextMenu />
-    <FileContextMenu />
+    <CollectionContextMenu />
+    <DocumentContextMenu />
   </div>
 </template>
 
 <script setup lang="ts">
-import FolderContextMenu from '~/components/global/ContextMenu/FolderContextMenu.vue';
-import FileContextMenu from '~/components/global/ContextMenu/FileContextMenu.vue';
+import CollectionContextMenu from '~/components/global/ContextMenu/CollectionContextMenu.vue';
+import DocumentContextMenu from '~/components/global/ContextMenu/DocumentContextMenu.vue';
 </script>
 
 <style scoped></style>

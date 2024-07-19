@@ -1,10 +1,39 @@
 import prisma_client from '~/prisma/prisma.client';
 import { z } from 'zod';
-import type { AppWorkspaceType, CreateWorkspaceSchema } from '../types';
-import type { Workspace } from './service.type';
+import type {
+  AppDocumentType,
+  AppWorkspaceType,
+  CreateWorkspaceSchema,
+} from '../types';
+import type {
+  Document,
+  Workspace,
+  WorkspaceWithCollectionDocuments,
+} from './service.type';
 import { validate } from 'uuid';
 import { Prisma, type collaborators, type workspaces } from '@prisma/client';
 import { FolderService } from './folder.service';
+
+const buildDocumentTree = (documentList: Document[]) => {
+  const hashTable: { [key: string]: AppDocumentType } = Object.create(null);
+  const nestedDocument: AppDocumentType[] = [];
+  documentList.forEach(document => {
+    hashTable[document.id] = {
+      ...document,
+      documents: [],
+    };
+  });
+
+  documentList.forEach(document => {
+    if (document.parentDocumentId)
+      (hashTable[document.parentDocumentId].documents as any[]).push(
+        hashTable[document.id],
+      );
+    else nestedDocument.push(hashTable[document.id]);
+  });
+
+  return nestedDocument;
+};
 
 export namespace WorkspaceService {
   export async function createWorkspace(
@@ -30,7 +59,7 @@ export namespace WorkspaceService {
     return workspace;
   }
 
-  export async function getWorkspaceByIdWithPermission(
+  export async function getWorkspaceByIdWithPermission_(
     uid: string,
     workspaceId: string,
   ) {
@@ -49,29 +78,49 @@ export namespace WorkspaceService {
             users: true,
           },
         },
-        folders: {
-          where: {
-            parentFolderId: null,
-          },
+        collections: {
           orderBy: {
             created_at: 'asc',
           },
           include: {
-            files: {
+            documents: {
               orderBy: {
                 created_at: 'asc',
               },
             },
           },
         },
-        files: {
+        documents: {
           where: {
-            folderId: null,
+            collectionId: null,
           },
           orderBy: {
             created_at: 'asc',
           },
         },
+        // folders: {
+        //   where: {
+        //     parentFolderId: null,
+        //   },
+        //   orderBy: {
+        //     created_at: 'asc',
+        //   },
+        //   include: {
+        //     files: {
+        //       orderBy: {
+        //         created_at: 'asc',
+        //       },
+        //     },
+        //   },
+        // },
+        // files: {
+        //   where: {
+        //     folderId: null,
+        //   },
+        //   orderBy: {
+        //     created_at: 'asc',
+        //   },
+        // },
       },
     });
 
@@ -105,6 +154,91 @@ export namespace WorkspaceService {
           return subFolders;
         }),
       );
+    }
+
+    if (!havePermission) {
+      throw createError({
+        status: 403,
+        message: 'Not have permission',
+      });
+    }
+
+    return workspace;
+  }
+
+  export async function getWorkspaceByIdWithPermission(
+    uid: string,
+    workspaceId: string,
+  ) {
+    let havePermission = false;
+    const workspace:
+      | (AppWorkspaceType & {
+          collaborators: collaborators[];
+        })
+      | null = await prisma_client.workspaces.findUnique({
+      where: {
+        id: workspaceId,
+      },
+      include: {
+        collaborators: {
+          include: {
+            users: true,
+          },
+        },
+        collections: {
+          include: {
+            documents: {
+              orderBy: {
+                created_at: 'asc',
+              },
+            },
+          },
+          orderBy: {
+            created_at: 'asc',
+          },
+        },
+        documents: {
+          where: {
+            collectionId: null,
+          },
+          orderBy: {
+            created_at: 'asc',
+          },
+        },
+      },
+    });
+
+    if (!workspace) {
+      throw createError({
+        status: 400,
+        message: 'Invalid workspace id',
+      });
+    }
+
+    if (workspace.workspaceOwner === uid) {
+      havePermission = true;
+    } else {
+      const collaborator = await prisma_client.collaborators.findFirst({
+        where: {
+          userId: uid,
+          workspaceId: workspaceId,
+        },
+      });
+      if (collaborator) havePermission = true;
+    }
+
+    // Convert data to nested collections & documents
+    if (workspace) {
+      if (workspace.collections.length) {
+        workspace.collections.forEach((collection, index) => {
+          const documentTree = buildDocumentTree(collection.documents || []);
+          workspace.collections[index].documents = documentTree;
+        });
+      }
+      if (workspace.documents.length) {
+        const documentTree = buildDocumentTree(workspace.documents);
+        workspace.documents = documentTree;
+      }
     }
 
     if (!havePermission) {
