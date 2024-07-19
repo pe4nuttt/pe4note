@@ -1,5 +1,5 @@
 import { useSupabaseClient } from '#imports';
-import type { File, Folder, User } from './services/service.type';
+import type { Document, Collection, User } from './services/service.type';
 import type { Database } from './supabase/supabase.types';
 
 export const getUsersFromSearch = async (emailKey: string): Promise<User[]> => {
@@ -19,21 +19,21 @@ export const getUsersFromSearch = async (emailKey: string): Promise<User[]> => {
   return data;
 };
 
-export const updateFolderTitleEmoji = async (params: {
-  folderId: string;
+export const updateCollectionTitleEmoji = async (params: {
+  collectionId: string;
   newTitle: string;
   newEmoji: string;
-}): Promise<Folder> => {
+}): Promise<Collection> => {
   const supabase = useSupabaseClient<Database>();
-  const { folderId, newTitle, newEmoji } = params;
+  const { collectionId, newTitle, newEmoji } = params;
 
   const { data, error } = await supabase
-    .from('folders')
+    .from('collections')
     .update({
-      title: newTitle,
+      name: newTitle,
       iconId: newEmoji,
     })
-    .eq('id', folderId)
+    .eq('id', collectionId)
     .select();
 
   if (error) {
@@ -50,11 +50,11 @@ export const updateFolderTitleEmoji = async (params: {
   };
 };
 
-export const updateFolder = async (
-  params: Partial<Folder> & { id: string },
+export const updateCollection = async (
+  params: Partial<Collection> & { id: string },
 ): Promise<
   | (
-      | Folder
+      | Collection
       | {
           created_at: string;
         }
@@ -64,9 +64,9 @@ export const updateFolder = async (
 > => {
   const supabase = useSupabaseClient<Database>();
   const { data, error } = await supabase
-    .from('folders')
+    .from('collections')
     .update({
-      ...(params as Folder & {
+      ...(params as Collection & {
         created_at: string;
       }),
     })
@@ -79,11 +79,11 @@ export const updateFolder = async (
   return data?.[0];
 };
 
-export const updateFile = async (
-  params: Partial<File> & { id: string },
+export const updateDocument = async (
+  params: Partial<Document> & { id: string },
 ): Promise<
   | (
-      | File
+      | Document
       | {
           created_at: string;
         }
@@ -93,9 +93,9 @@ export const updateFile = async (
 > => {
   const supabase = useSupabaseClient<Database>();
   const { data, error } = await supabase
-    .from('files')
+    .from('documents')
     .update({
-      ...(params as File & {
+      ...(params as Document & {
         created_at: string;
       }),
     })
@@ -108,13 +108,13 @@ export const updateFile = async (
   return data?.[0];
 };
 
-export const addNewFolder = async (folderData: Folder) => {
+export const addNewCollection = async (collectionData: Collection) => {
   const supabase = useSupabaseClient<Database>();
 
   const { data, error } = await supabase
-    .from('folders')
+    .from('collections')
     .insert(
-      folderData as Folder & {
+      collectionData as Collection & {
         created_at: string;
       },
     )
@@ -127,13 +127,13 @@ export const addNewFolder = async (folderData: Folder) => {
   return data?.[0];
 };
 
-export const addNewFile = async (fileData: File) => {
+export const addNewDocument = async (documentData: Document) => {
   const supabase = useSupabaseClient<Database>();
 
   const { data, error } = await supabase
-    .from('files')
+    .from('documents')
     .insert(
-      fileData as File & {
+      documentData as Document & {
         created_at: string;
       },
     )

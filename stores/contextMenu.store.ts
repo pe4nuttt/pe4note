@@ -1,47 +1,47 @@
 import { defineStore } from 'pinia';
-import type { File, Folder } from '~/lib/services/service.type';
+import type { Document, Collection } from '~/lib/services/service.type';
 
 export const useContextMenuStore = defineStore('contextMenuStore', () => {
-  const folderContextMenu = ref<{
-    folder: Folder | null;
+  const collectionContextMenu = ref<{
+    collection: Collection | null;
     event: MouseEvent | null;
-    wrapperId?: string | null; // Folder sidebar element id
+    wrapperId?: string | null; // Collection sidebar element id
   }>();
 
-  const onFolderContextMenu = (
+  const onCollectionContextMenu = (
     event: MouseEvent,
-    folder: Folder,
+    collection: Collection,
     wrapperId?: string,
   ) => {
-    folderContextMenu.value = {
-      folder,
+    collectionContextMenu.value = {
+      collection,
       event,
       wrapperId: wrapperId,
     };
   };
 
-  const fileContextMenu = ref<{
-    file: File | null;
+  const documentContextMenu = ref<{
+    document: Document | null;
     event: MouseEvent | null;
-    wrapperId?: string | null; // File sidebar element id
+    wrapperId?: string | null; // Document sidebar element id
   }>();
 
-  const onFileContextMenu = (
+  const onDocumentContextMenu = (
     event: MouseEvent,
-    file: File,
+    document: Document,
     wrapperId?: string,
   ) => {
-    fileContextMenu.value = {
-      file,
+    documentContextMenu.value = {
+      document,
       event,
       wrapperId: wrapperId,
     };
   };
 
   return {
-    folderContextMenu,
-    fileContextMenu,
-    onFolderContextMenu,
-    onFileContextMenu,
+    collectionContextMenu,
+    documentContextMenu,
+    onCollectionContextMenu,
+    onDocumentContextMenu,
   };
 });

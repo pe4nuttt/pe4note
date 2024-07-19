@@ -382,8 +382,8 @@ model public_users {
   payment_method  Json?
   email           String?
   collaborators   collaborators[]
-  files           files[]
-  folders         folders[]
+  collections     collections[]
+  documents       documents[]
   users           auth_users      @relation(fields: [id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   workspaces      workspaces[]
 
@@ -403,44 +403,6 @@ model collaborators {
   @@schema("public")
 }
 
-model files {
-  id          String        @id(map: "Files_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  created_at  DateTime      @default(now()) @db.Timestamptz(6)
-  title       String?
-  iconId      String
-  data        String?
-  inTrash     String?
-  bannerUrl   String?
-  workspaceId String        @db.Uuid
-  folderId    String?       @db.Uuid
-  ownerId     String?       @default(dbgenerated("auth.uid()")) @db.Uuid
-  folders     folders?      @relation(fields: [folderId], references: [id], onDelete: Cascade, map: "Files_folderId_fkey")
-  workspaces  workspaces    @relation(fields: [workspaceId], references: [id], onDelete: Cascade, map: "Files_workspaceId_fkey")
-  users       public_users? @relation(fields: [ownerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
-  @@schema("public")
-}
-
-model folders {
-  id             String        @id(map: "Folders_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  created_at     DateTime      @default(now()) @db.Timestamptz(6)
-  title          String?
-  iconId         String
-  data           String?
-  inTrash        String?
-  bannerUrl      String?
-  workspaceId    String        @db.Uuid
-  parentFolderId String?       @db.Uuid
-  ownerId        String?       @default(dbgenerated("auth.uid()")) @db.Uuid
-  files          files[]
-  folders        folders?      @relation("foldersTofolders", fields: [parentFolderId], references: [id], map: "Folders_parentFolderId_fkey")
-  other_folders  folders[]     @relation("foldersTofolders")
-  workspaces     workspaces    @relation(fields: [workspaceId], references: [id], onDelete: Cascade, map: "Folders_workspaceId_fkey")
-  users          public_users? @relation(fields: [ownerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
-  @@schema("public")
-}
-
 model workspaces {
   id             String          @id(map: "Workspaces_pkey") @db.Uuid
   created_at     DateTime        @default(now()) @db.Timestamptz(6)
@@ -452,9 +414,49 @@ model workspaces {
   bannerUrl      String?
   workspaceOwner String?         @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   collaborators  collaborators[]
-  files          files[]
-  folders        folders[]
+  collections    collections[]
+  documents      documents[]
   users          public_users?   @relation(fields: [workspaceOwner], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "Workspaces_workspaceOwner_fkey")
+
+  @@schema("public")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model collections {
+  id          String        @id(map: "Folders_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at  DateTime      @default(now()) @db.Timestamptz(6)
+  name        String?
+  iconId      String
+  data        String?
+  inTrash     String?
+  bannerUrl   String?
+  workspaceId String        @db.Uuid
+  ownerId     String?       @default(dbgenerated("auth.uid()")) @db.Uuid
+  workspaces  workspaces    @relation(fields: [workspaceId], references: [id], onDelete: Cascade, map: "Folders_workspaceId_fkey")
+  users       public_users? @relation(fields: [ownerId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "folders_ownerId_fkey")
+  documents   documents[]
+
+  @@schema("public")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model documents {
+  id               String        @id(map: "Files_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at       DateTime      @default(now()) @db.Timestamptz(6)
+  title            String?
+  iconId           String
+  data             String?
+  inTrash          String?
+  bannerUrl        String?
+  workspaceId      String        @db.Uuid
+  collectionId     String?       @db.Uuid
+  ownerId          String?       @default(dbgenerated("auth.uid()")) @db.Uuid
+  parentDocumentId String?       @db.Uuid
+  workspaces       workspaces    @relation(fields: [workspaceId], references: [id], onDelete: Cascade, map: "Files_workspaceId_fkey")
+  documents        documents?    @relation("documentsTodocuments", fields: [parentDocumentId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  other_documents  documents[]   @relation("documentsTodocuments")
+  collections      collections?  @relation(fields: [collectionId], references: [id], onDelete: Cascade, map: "files_collectionId_fkey")
+  users            public_users? @relation(fields: [ownerId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "files_ownerId_fkey")
 
   @@schema("public")
 }

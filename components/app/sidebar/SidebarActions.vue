@@ -8,7 +8,7 @@
     <DropdownMenu>
       <DropdownMenuTrigger>
         <Button
-          v-tooltip="'New Folder or Page'"
+          v-tooltip="'New Collection or Page'"
           variant="ghost"
           size="icon"
           class="text-muted-foreground"
@@ -22,7 +22,7 @@
       </DropdownMenuTrigger>
       <DropdownMenuContent side="top" align="end" class="min-w-48">
         <DropdownMenuGroup>
-          <DropdownMenuItem @click="fnAddNewFolder">
+          <DropdownMenuItem @click="fnAddNewCollection">
             <div class="w-full flex items-start justify-between gap-2">
               <div class="top-[-2px] text-muted-foreground">
                 <Icon
@@ -32,19 +32,23 @@
                 />
               </div>
               <div class="flex-1">
-                <p class="font-medium">New Folder</p>
-                <div class="text-muted-foreground">Create Folder</div>
+                <p class="font-medium">New Collection</p>
+                <div class="text-muted-foreground text-[13px]">
+                  Create Collection
+                </div>
               </div>
             </div>
           </DropdownMenuItem>
-          <DropdownMenuItem @click="fnAddNewFile">
+          <DropdownMenuItem @click="fnAddNewDocument">
             <div class="w-full flex items-start justify-between gap-2">
               <div class="top-[-2px] text-muted-foreground">
                 <Icon name="ph:file-fill" size="18px" color="currentColor" />
               </div>
               <div class="flex-1">
-                <p class="font-medium">New File</p>
-                <div class="text-muted-foreground">Create File</div>
+                <p class="font-medium">New Document</p>
+                <div class="text-muted-foreground text-[13px]">
+                  Create Document
+                </div>
               </div>
             </div>
           </DropdownMenuItem>
@@ -64,10 +68,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import type { File, Folder } from '~/lib/services/service.type';
+import type { Document, Collection } from '~/lib/services/service.type';
 import { v4 as uuidv4 } from 'uuid';
 import { useToast } from '~/components/ui/toast';
-import { addNewFile, addNewFolder } from '~/lib/datastore';
+import { addNewDocument, addNewCollection } from '~/lib/datastore';
 
 // Data
 const { toast } = useToast();
@@ -75,13 +79,13 @@ const workspaceStore = useWorkspaceStore();
 const user = useSupabaseUser();
 
 // Methods
-const fnAddNewFolder = async () => {
+const fnAddNewCollection = async () => {
   if (!workspaceStore.workspace?.id) {
     return;
   }
 
   try {
-    const payload: Folder = {
+    const payload: Collection = {
       id: uuidv4(),
       workspaceId: workspaceStore.workspace.id,
       bannerUrl: null,
@@ -90,15 +94,14 @@ const fnAddNewFolder = async () => {
       iconId: '💼',
       inTrash: null,
       ownerId: user.value?.id as string,
-      parentFolderId: null,
-      title: '',
+      name: '',
     };
 
-    await addNewFolder(payload);
+    await addNewCollection(payload);
 
     toast({
       title: 'Success',
-      description: 'Added new Folder',
+      description: 'Added new Collection',
       variant: 'success',
     });
   } catch (error) {
@@ -111,13 +114,13 @@ const fnAddNewFolder = async () => {
   }
 };
 
-const fnAddNewFile = async () => {
+const fnAddNewDocument = async () => {
   if (!workspaceStore.workspace?.id) {
     return;
   }
 
   try {
-    const payload: File = {
+    const payload: Document = {
       id: uuidv4(),
       workspaceId: workspaceStore.workspace.id,
       bannerUrl: null,
@@ -126,15 +129,16 @@ const fnAddNewFile = async () => {
       iconId: '🗒️',
       inTrash: null,
       ownerId: user.value?.id as string,
-      folderId: null,
+      collectionId: null,
       title: '',
+      parentDocumentId: null,
     };
 
-    await addNewFile(payload);
+    await addNewDocument(payload);
 
     toast({
       title: 'Success',
-      description: 'Added new File',
+      description: 'Added new Document',
       variant: 'success',
     });
   } catch (error) {
