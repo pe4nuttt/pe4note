@@ -5,8 +5,8 @@
     class="w-screen h-screen overflow-hidden flex flex-col bg-app-bg-color !bg-background"
   >
     <div class="h-11">
-      App Header
       <!-- <ColorMode /> -->
+      App Header
     </div>
 
     <ResizablePanelGroup
