@@ -69,11 +69,11 @@ const { refresh: refreshWorkspaceList } = await useAsyncData(
 );
 
 // subscription status
-const {
-  data: subscriptionData,
-  refresh: resetSubscriptionData,
-  error: subscriptionError,
-} = await useAsyncData(() => getUserSubscriptionStatus(userId.value));
+// const {
+//   data: subscriptionData,
+//   refresh: resetSubscriptionData,
+//   error: subscriptionError,
+// } = await useAsyncData(() => getUserSubscriptionStatus(userId.value));
 
 // folders
 const {
@@ -87,9 +87,9 @@ const {
   },
 );
 
-if (subscriptionError || foldersError) {
-  // navigateTo('/dashboard');
-}
+// if (subscriptionError || foldersError) {
+//   navigateTo('/dashboard');
+// }
 // error
 // get all different workspaces (private, collaborating, shared)
 // await useAsyncData('workspaces', () =>
@@ -119,7 +119,10 @@ watch(
 watch(
   [userId],
   async () => {
-    await Promise.all([resetSubscriptionData(), refreshWorkspaceList()]);
+    await Promise.all([
+      // resetSubscriptionData(),
+      refreshWorkspaceList(),
+    ]);
   },
   {
     immediate: true,

@@ -8,7 +8,8 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "db:pull dev": "dotenv -e .env.dev npx prisma db pull"
+    "db:pull dev": "dotenv -e .env.dev npx prisma db pull",
+    "migrate:dev": "dotenv -e .env.dev npx prisma migrate dev"
   },
   "dependencies": {
     "@floating-ui/dom": "^1.6.5",
@@ -20,12 +21,13 @@
     "@prisma/client": "^5.14.0",
     "@radix-icons/vue": "^1.0.0",
     "@scalar/nuxt": "^0.0.29",
+    "@tiptap/extension-bubble-menu": "^2.6.6",
     "@tiptap/extension-bullet-list": "^2.5.1",
     "@tiptap/extension-character-count": "^2.5.1",
     "@tiptap/extension-code-block": "^2.5.1",
     "@tiptap/extension-code-block-lowlight": "^2.5.1",
-    "@tiptap/extension-collaboration": "^2.5.1",
-    "@tiptap/extension-collaboration-cursor": "^2.5.1",
+    "@tiptap/extension-collaboration": "^2.6.6",
+    "@tiptap/extension-collaboration-cursor": "^2.6.6",
     "@tiptap/extension-color": "^2.5.1",
     "@tiptap/extension-document": "^2.5.1",
     "@tiptap/extension-dropcursor": "^2.5.1",
@@ -52,7 +54,7 @@
     "@tiptap/extension-underline": "^2.5.1",
     "@tiptap/pm": "^2.4.0",
     "@tiptap/starter-kit": "^2.4.0",
-    "@tiptap/vue-3": "^2.4.0",
+    "@tiptap/vue-3": "^2.6.6",
     "@types/lodash": "^4.17.4",
     "@vee-validate/nuxt": "^4.12.6",
     "@vee-validate/zod": "^4.12.6",
@@ -77,6 +79,7 @@
     "vee-validate": "^4.12.6",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0",
+    "y-prosemirror": "^1.2.12",
     "yjs": "^13.6.18",
     "zod": "^3.23.6"
   },

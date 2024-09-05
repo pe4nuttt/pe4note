@@ -1,5 +1,7 @@
 @import './typography.scss';
-
+@import './list.scss';
+@import './code.scss';
+@import './collab.scss';
 .ProseMirror {
   @apply caret-black dark:caret-white outline-0 pr-8 pl-20 py-16 z-0 lg:pl-8 lg:pr-8;
 
@@ -14,10 +16,6 @@
   .selection,
   *::selection {
     @apply bg-black/10 dark:bg-white/20;
-  }
-
-  & > .react-renderer {
-    @apply my-12 first:mt-0 last:mb-0;
   }
 
   &.resize-cursor {

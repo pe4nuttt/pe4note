@@ -4,28 +4,31 @@
     id="app-panel"
     class="w-screen h-screen overflow-hidden flex flex-col bg-app-bg-color !bg-background"
   >
-    <div class="h-11">
-      <!-- <ColorMode /> -->
-      App Header
-    </div>
+    <!-- <div class="h-11"> -->
+    <AppHeader class="h-11" @toggle-collapse="handleToggleCollapse" />
+    <!-- </div> -->
 
     <ResizablePanelGroup
       id="default-layout-group"
       class="h-full"
       direction="horizontal"
+      @layout="layout = $event"
     >
       <ResizablePanel
+        ref="panelRef"
         id="default-layout-group__panel-1"
+        collapsible
         :min-size="15"
         :max-size="30"
         :default-size="20"
+        :collapsed-size="0"
       >
         <AppSidebar
           class="box-border h-full"
           :workspaceId="(route.params.workspaceId as string)"
         />
       </ResizablePanel>
-      <ResizableHandle id="default-layout-group__resize-1" with-handle />
+      <ResizableHandle id="default-layout-group__resize-1" />
       <ResizablePanel
         id="default-layout-group__panel-2"
         class="p-2"
@@ -48,21 +51,26 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/components/ui/resizable';
+import AppHeader from '@/components/app/header/index.vue';
+import type { SplitterPanel } from 'radix-vue';
 
 const route = useRoute();
 const workspaceStore = useWorkspaceStore();
+const layout = useCookie<number[]>('splitter:layout');
 
 const { refresh: refreshCurrentWorkspaceData } = await useAsyncData(
   'currentWorkspaceData',
   () =>
     workspaceStore
       .fetchCurrentWorkspace(route.params.workspaceId as string)
-      .then(() => true),
+      .then(() => true)
+      .catch(error => {}),
   // {
   //   watch: [() => route.params.workspaceId],
   //   immediate: true,
   // },
 );
+const panelRef = ref<InstanceType<typeof SplitterPanel>>();
 
 watch(
   () => route.params.workspaceId,
@@ -71,12 +79,21 @@ watch(
     // if (val) {
     //   workspaceStore.fetchCurrentWorkspace(val as string);
     // }
-    refreshCurrentWorkspaceData();
+    if (route.params.workspaceId) {
+      refreshCurrentWorkspaceData();
+    }
   },
   {
     immediate: true,
   },
 );
+
+// Methods
+const handleToggleCollapse = () => {
+  panelRef?.value?.isCollapsed
+    ? panelRef?.value?.expand()
+    : panelRef?.value?.collapse();
+};
 </script>
 
 <style scoped></style>

@@ -32,6 +32,9 @@ export const useWorkspaceStore = defineStore('workspace', () => {
 
   const fetchCurrentWorkspace = async (workspaceId: string) => {
     try {
+      if (!workspaceId) {
+        return;
+      }
       const res = await getWorkspaceDetailApi(workspaceId);
       if (res.data) {
         console.log('[fetchCurrentWorkspace]', res.data);

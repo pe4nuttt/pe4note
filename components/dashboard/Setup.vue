@@ -13,7 +13,7 @@
           <div class="flex gap-4 items-center">
             <FormField v-slot="{ componentField }" name="iconId">
               <EmojiPicker
-                :modalValue="componentField.modelValue"
+                :model-value="componentField.modelValue"
                 @update:model-value="componentField['onUpdate:modelValue']"
                 v-bind="componentField"
               >

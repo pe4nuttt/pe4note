@@ -51,6 +51,29 @@
     --destructive-foreground: 0 0% 100%;
     --ring: 0 0% 100%;
     --radius: 0.5rem;
+
+    // Pallete
+    // -------------------- text highlight (background) --------------------
+    --pe4note-text-highlight-pink: rgba(255, 206, 206, 1);
+    --pe4note-text-highlight-red: rgba(254, 213, 213, 1);
+    --pe4note-text-highlight-orange: rgba(254, 223, 187, 1);
+    --pe4note-text-highlight-yellow: rgba(254, 243, 161, 1);
+    --pe4note-text-highlight-green: rgba(225, 250, 177, 1);
+    --pe4note-text-highlight-teal: rgba(173, 248, 233, 1);
+    --pe4note-text-highlight-blue: rgba(204, 226, 254, 1);
+    --pe4note-text-highlight-purple: rgba(237, 221, 255, 1);
+    --pe4note-text-highlight-gray: rgba(234, 236, 239, 1);
+
+    // -------------------- text highlight (foreground) --------------------
+    --pe4note-text-highlight-foreground-pink: rgba(193, 76, 138, 1);
+    --pe4note-text-highlight-foreground-red: rgba(198, 34, 34, 1);
+    --pe4note-text-highlight-foreground-orange: rgba(211, 79, 11, 1);
+    --pe4note-text-highlight-foreground-yellow: rgba(182, 124, 4, 1);
+    --pe4note-text-highlight-foreground-green: rgba(20, 147, 67, 1);
+    --pe4note-text-highlight-foreground-teal: rgba(7, 130, 160, 1);
+    --pe4note-text-highlight-foreground-blue: rgba(33, 89, 211, 1);
+    --pe4note-text-highlight-foreground-purple: rgba(132, 46, 211, 1);
+    --pe4note-text-highlight-foreground-gray: rgba(122, 122, 122, 1);
   }
 
   .dark {
@@ -78,6 +101,28 @@
     --header-bg-color: #222227;
     --app-bg-color: #1b1b23;
     --tab-bg-color: #151921;
+
+    // Pallete
+    // -------------------- text highlight (background) --------------------
+    --pe4note-text-highlight-pink: rgba(127, 93, 93, 1);
+    --pe4note-text-highlight-red: rgba(108, 39, 39, 1);
+    --pe4note-text-highlight-orange: rgba(112, 58, 21, 1);
+    --pe4note-text-highlight-yellow: rgba(106, 84, 15, 1);
+    --pe4note-text-highlight-green: rgba(26, 91, 50, 1);
+    --pe4note-text-highlight-teal: rgba(14, 85, 97, 1);
+    --pe4note-text-highlight-blue: rgba(56, 75, 122, 1);
+    --pe4note-text-highlight-purple: rgba(80, 46, 111, 1);
+    --pe4note-text-highlight-gray: rgba(64, 67, 74, 1);
+
+    /* text highlight (foreground) */
+    --pe4note-text-highlight-foreground-red: rgba(249, 141, 141, 1);
+    --pe4note-text-highlight-foreground-orange: rgba(252, 168, 99, 1);
+    --pe4note-text-highlight-foreground-yellow: rgba(251, 214, 68, 1);
+    --pe4note-text-highlight-foreground-green: rgba(110, 229, 153, 1);
+    --pe4note-text-highlight-foreground-teal: rgba(87, 221, 204, 1);
+    --pe4note-text-highlight-foreground-blue: rgba(128, 183, 251, 1);
+    --pe4note-text-highlight-foreground-purple: rgba(205, 157, 253, 1);
+    --pe4note-text-highlight-foreground-gray: rgba(86, 86, 86, 1);
   }
 }
 

@@ -1,9 +1,50 @@
 <template>
-  <div></div>
+  <DropdownMenu>
+    <DropdownMenuTrigger>
+      <ToolbarButton
+        :active="activeItem?.id != 'paragraph' && activeItem?.type == 'option'"
+      >
+        <!-- <Icon
+          :name="
+            activeItem?.type === 'option' ? activeItem.icon : 'lucide:pilcrow'
+          "
+        /> -->
+        <span class="mr-1">
+          {{ activeItem?.type === 'option' ? activeItem.label : 'Paragraph' }}
+        </span>
+        <Icon name="lucide:chevron-down" />
+      </ToolbarButton>
+    </DropdownMenuTrigger>
+    <DropdownMenuContent class="min-w-48">
+      <DropdownMenuGroup>
+        <template v-for="option in options" :key="option.id">
+          <DropdownMenuLabel
+            class="uppercase text-[10px] [&:not(:first-child)]:mt-2"
+            v-if="option.type === 'category'"
+          >
+            {{ option.label }}
+          </DropdownMenuLabel>
+          <DropdownMenuItem v-else @click="option.onClick">
+            <Icon class="mr-2" size="18px" :name="option.icon" />
+            <span>{{ option.label }}</span>
+          </DropdownMenuItem>
+        </template>
+      </DropdownMenuGroup>
+    </DropdownMenuContent>
+  </DropdownMenu>
 </template>
 
 <script setup lang="ts">
 import type { ModuleOptions } from 'nuxt-icon';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { ToolbarButton } from '~/components/ui/toolbar';
 
 export type ContentTypePickerOption = {
   label: string;

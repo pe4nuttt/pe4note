@@ -25,7 +25,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
 <template>
   <ToolbarToggleGroup
     :class="
-      cn(`data-[orientation=vertical]:flex-col flex gap-[1px]`, props.class)
+      cn(`data-[orientation=vertical]:flex-col flex gap-0.5`, props.class)
     "
     v-bind="forwarded"
   >

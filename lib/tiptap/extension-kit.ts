@@ -18,8 +18,8 @@ import {
   // Superscript,
   // Paragraph,
   CodeBlock,
-  // BulletList,
-  // OrderedList,
+  BulletList,
+  OrderedList,
   // Collaboration,
   // TaskItem,
   // TaskList,
@@ -38,6 +38,7 @@ import {
   Superscript,
   Selection,
   Figcaption,
+  PageNode,
 } from './index';
 import { lowlight } from 'lowlight';
 import { CodeBlockLowlight } from '@tiptap/extension-code-block-lowlight';
@@ -45,6 +46,8 @@ import { CodeBlockLowlight } from '@tiptap/extension-code-block-lowlight';
 export const ExtensionKit = [
   Document,
   Columns,
+  OrderedList,
+  BulletList,
   TaskList,
   TaskItem.configure({
     nested: true,
@@ -112,4 +115,5 @@ export const ExtensionKit = [
     width: 2,
     class: 'ProseMirror-dropcursor border-black',
   }),
+  PageNode,
 ];
