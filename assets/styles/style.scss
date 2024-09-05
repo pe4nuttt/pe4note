@@ -42,3 +42,11 @@ body {
     }
   }
 }
+
+// Tooltip
+.v-popper--theme-tooltip {
+  .v-popper__inner {
+    background: rgba(0, 0, 0, 0.8);
+    font-size: 12px;
+  }
+}

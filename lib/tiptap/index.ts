@@ -1,3 +1,5 @@
+import isCustomNodeSelected from './isCustomNodeSelected';
+
 export { StarterKit } from '@tiptap/starter-kit';
 export { Highlight } from '@tiptap/extension-highlight';
 export { CharacterCount } from '@tiptap/extension-character-count';
@@ -42,3 +44,7 @@ export { Figcaption } from './Figcaption';
 // export { ImageUpload } from './ImageUpload';
 // export { ImageBlock } from './ImageBlock';
 // export { emojiSuggestion } from './EmojiSuggestion';
+export { PageNode } from './PageNode';
+
+export { isCustomNodeSelected } from './isCustomNodeSelected';
+export { isTextSelected } from './isTextSelected';

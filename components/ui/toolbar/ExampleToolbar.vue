@@ -1,7 +1,8 @@
 <template>
   <div>
     <Toolbar class="fixed top-4 left-60 z-10">
-      <!-- <ToolbarButton class="text-white">Test123</ToolbarButton> -->
+      <ToolbarButton class="">Test123</ToolbarButton>
+      <ToolbarButton class="">Test123</ToolbarButton>
 
       <ToolbarToggleGroup
         v-model="toggleStateMultiple"

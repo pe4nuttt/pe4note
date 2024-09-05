@@ -19,7 +19,12 @@ const forwardedProps = useForwardProps(delegatedProps);
 
 <template>
   <ToolbarRoot
-    :class="cn('flex p-1 !min-w-max rounded-md bg-popover border', props.class)"
+    :class="
+      cn(
+        'flex p-1 !min-w-max rounded-md bg-popover border gap-0.5',
+        props.class,
+      )
+    "
     v-bind="forwardedProps"
   >
     <slot />
