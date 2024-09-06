@@ -1,7 +1,11 @@
 import { useUserStore } from '~/stores/user.store';
-const whiteList = ['/auth/login', 'error'];
+const whiteList = ['/auth/login', 'error', '/auth/confirm'];
 
 export default defineNuxtRouteMiddleware((to, _from) => {
+  console.debug('[MIDDLEWARE]', to, _from);
+
+  // return;
+
   const user = useSupabaseUser();
   if (user.value) {
     if (to.fullPath === '/auth/login') {
@@ -17,27 +21,11 @@ export default defineNuxtRouteMiddleware((to, _from) => {
       return;
     }
   }
-  if (whiteList.includes(to.fullPath)) {
+
+  if (whiteList.includes(to.path)) {
     return;
   }
   return navigateTo('/auth/login', {
     replace: true,
   });
-
-  // if (whiteList.includes(to.fullPath)) {
-  //   if (user.value) {
-  //     // console.log('WHITELIST::', user.value);
-  //     return navigateTo('/dashboard', {
-  //       replace: true,
-  //     });
-  //   }
-  //   return;
-  // }
-  // if (!user.value) {
-  //   return navigateTo('/auth/login', {
-  //     replace: true,
-  //   });
-  // } else {
-  //   // Store
-  // }
 });
