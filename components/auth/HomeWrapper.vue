@@ -39,7 +39,7 @@ const fnLoginGoogle = async () => {
     const { data, error } = await supabaseClient.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: '/',
+        redirectTo: 'http://localhost:3000/auth/confirm',
         queryParams: {
           access_type: 'offline',
           prompt: 'consent',
