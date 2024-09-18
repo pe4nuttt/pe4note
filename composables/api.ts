@@ -74,3 +74,10 @@ export const getWorkspaceDetailApi = async (
     method: 'GET',
   });
 };
+
+export const getDocumentApi = async (
+  documentId: string,
+): Promise<{ data: DocumentType }> => {
+  const { apiFetch } = useBaseFetch();
+  return await apiFetch();
+};
