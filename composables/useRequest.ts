@@ -7,5 +7,8 @@ export const useBaseFetch = () => {
 
   return {
     apiFetch,
+    provide: {
+      apiFetch,
+    },
   };
 };

@@ -40,7 +40,7 @@ const editor = useEditor({
 const wsConnection = new WebSocket('ws://127.0.0.1:8080/sync');
 const ydoc = new Y.Doc();
 const provider = new HocuspocusProvider({
-  name: 'document.name',
+  name: 'document_019b1c45-b69c-4d67-ad5d-a54dd64cf374',
   url: wsConnection.url,
   document: ydoc,
 });
