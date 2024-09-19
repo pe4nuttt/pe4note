@@ -6,12 +6,15 @@ export const useDocumentStore = defineStore('document', () => {
 
   const fetchCurrentDocument = async (documentId: string) => {
     try {
-      const res;
+      const res = await getDocumentApi(documentId);
     } catch (error) {
       console.log('[ERROR - STORE] fetchCurrentDocument', error);
       throw error;
     }
   };
 
-  return {};
+  return {
+    document,
+    fetchCurrentDocument,
+  };
 });

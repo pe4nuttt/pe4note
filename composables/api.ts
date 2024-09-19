@@ -79,5 +79,7 @@ export const getDocumentApi = async (
   documentId: string,
 ): Promise<{ data: DocumentType }> => {
   const { apiFetch } = useBaseFetch();
-  return await apiFetch();
+  return await apiFetch(`/document/${documentId}`, {
+    method: 'GET',
+  });
 };
