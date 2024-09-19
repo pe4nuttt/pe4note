@@ -44,3 +44,15 @@ const workspaceWithCollectionDocuments =
 export type WorkspaceWithCollectionDocuments = Prisma.workspacesGetPayload<
   typeof workspaceWithCollectionDocuments
 >;
+
+export enum DocumentPermissionType {
+  VIEW = 1,
+  EDIT = 2,
+  DELETE = 3,
+}
+
+export enum CollectionPermissionType {
+  VIEW = 1,
+  EDIT = 2,
+  DELETE = 3,
+}
