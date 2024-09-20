@@ -1,11 +1,14 @@
+import type { Prisma } from '@prisma/client';
 import { string } from 'zod';
 import type {
+  Document,
   Folder,
   GetWorkspaceListType,
   Subscription,
   Workspace,
 } from '~/lib/services/service.type';
 import type { AppWorkspaceType } from '~/lib/types';
+import qs from 'qs';
 
 export const createWorkspaceApi = async (
   workspace: Workspace,
@@ -77,9 +80,13 @@ export const getWorkspaceDetailApi = async (
 
 export const getDocumentApi = async (
   documentId: string,
-): Promise<{ data: DocumentType }> => {
+  select?: Prisma.documentsSelect,
+): Promise<{ data: Document }> => {
   const { apiFetch } = useBaseFetch();
   return await apiFetch(`/document/${documentId}`, {
     method: 'GET',
+    params: {
+      select: select || '',
+    },
   });
 };

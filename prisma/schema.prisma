@@ -406,6 +406,7 @@ model collaborators {
   users       public_users? @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "Collaborators_userId_fkey")
   workspaces  workspaces?   @relation(fields: [workspaceId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "Collaborators_workspaceId_fkey")
 
+  @@unique([workspaceId, userId])
   @@schema("public")
 }
 
@@ -457,14 +458,14 @@ model documents {
   bannerUrl            String?
   workspaceId          String                 @db.Uuid
   collectionId         String?                @db.Uuid
-  ownerId              String?                @default(dbgenerated("auth.uid()")) @db.Uuid
+  ownerId              String                 @default(dbgenerated("auth.uid()")) @db.Uuid
   parentDocumentId     String?                @db.Uuid
   document_permissions document_permissions[]
   workspaces           workspaces             @relation(fields: [workspaceId], references: [id], onDelete: Cascade, map: "Files_workspaceId_fkey")
+  users                public_users           @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "files_ownerId_fkey")
   documents            documents?             @relation("documentsTodocuments", fields: [parentDocumentId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   other_documents      documents[]            @relation("documentsTodocuments")
   collections          collections?           @relation(fields: [collectionId], references: [id], onDelete: Cascade, map: "files_collectionId_fkey")
-  users                public_users?          @relation(fields: [ownerId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "files_ownerId_fkey")
 
   @@schema("public")
 }

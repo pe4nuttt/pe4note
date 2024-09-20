@@ -1,5 +1,5 @@
 import { DocumentService } from '~/lib/services/document.service';
-
+import * as z from 'zod';
 export default defineEventHandler(async event => {
   const documentId = getRouterParam(event, 'documentId');
 
@@ -10,9 +10,14 @@ export default defineEventHandler(async event => {
     });
   }
 
+  const queryParams = getQuery(event);
+  const select = queryParams?.select
+    ? JSON.parse(queryParams.select as string)
+    : undefined;
+
   const uid = event.context.user.id as string;
 
-  const document = await DocumentService.getDocument(uid, documentId);
+  const document = await DocumentService.getDocument(uid, documentId, select);
 
   if (!document)
     throw createError({
@@ -20,5 +25,7 @@ export default defineEventHandler(async event => {
       message: 'Document not found',
     });
 
-  return document;
+  return {
+    data: document,
+  };
 });
