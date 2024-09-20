@@ -7,6 +7,7 @@ export default defineEventHandler(async event => {
 
   let isAuth = false;
   const cookies = parseCookies(event);
+
   if (cookies) {
     const user = await serverSupabaseUser(event);
 

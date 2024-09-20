@@ -2,9 +2,11 @@
   <div class="py-4 flex flex-col">
     <div class="flex-1 flex flex-col overflow-hidden mb-4">
       <WorkspaceDropdown
-        :privateWorkspaces="(workspaceListStore.privateWorkspaces as Workspace[])"
-        :collaboratingWorkspaces="(workspaceListStore.collaboratingWorkspaces as Workspace[])"
-        :sharedWorkspaces="(workspaceListStore.sharedWorkspaces as Workspace[])"
+        :privateWorkspaces="workspaceListStore.privateWorkspaces as Workspace[]"
+        :collaboratingWorkspaces="
+          workspaceListStore.collaboratingWorkspaces as Workspace[]
+        "
+        :sharedWorkspaces="workspaceListStore.sharedWorkspaces as Workspace[]"
         :defaultWorkspace="
           workspaceId
             ? [
@@ -61,11 +63,12 @@ const workspaceListStore = useWorkspaceListStore();
 
 const { refresh: refreshWorkspaceList } = await useAsyncData(
   'workspaceList',
-  () =>
-    workspaceListStore
+  () => {
+    return workspaceListStore
       .fetchWorkspaces()
       .then(() => true)
-      .catch(error => alert(error)),
+      .catch(error => alert(error));
+  },
 );
 
 // subscription status
@@ -119,10 +122,12 @@ watch(
 watch(
   [userId],
   async () => {
-    await Promise.all([
-      // resetSubscriptionData(),
-      refreshWorkspaceList(),
-    ]);
+    if (userId) {
+      await Promise.all([
+        // resetSubscriptionData(),
+        refreshWorkspaceList(),
+      ]);
+    }
   },
   {
     immediate: true,
