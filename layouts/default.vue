@@ -23,10 +23,7 @@
         :default-size="20"
         :collapsed-size="0"
       >
-        <AppSidebar
-          class="box-border h-full"
-          :workspaceId="(route.params.workspaceId as string)"
-        />
+        <AppSidebar class="box-border h-full" />
       </ResizablePanel>
       <ResizableHandle id="default-layout-group__resize-1" />
       <ResizablePanel

@@ -78,6 +78,7 @@ export default defineNuxtConfig({
   },
 
   nitro: {
+    serveStatic: true,
     experimental: {
       openAPI: true,
     },

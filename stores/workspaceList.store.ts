@@ -24,7 +24,7 @@ export const useWorkspaceListStore = defineStore('workspaceList', () => {
 
   const fetchWorkspaces = async () => {
     try {
-      if (!user) {
+      if (user) {
         const [
           privateWorkspacesData,
           sharedWorkspacesData,
