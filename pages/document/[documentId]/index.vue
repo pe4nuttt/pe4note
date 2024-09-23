@@ -11,19 +11,56 @@ const route = useRoute();
 const documentId = route.params.documentId;
 // const documentId = '24f6c494-53f3-403e-9b4a-f78ed19df7fd';
 
-const { document, fetchCurrentDocument } = useDocumentStore();
+const documentStore = useDocumentStore();
+const { document } = storeToRefs(documentStore);
+const { fetchCurrentDocument } = documentStore;
 const { fetchCurrentWorkspace } = useWorkspaceStore();
 
-onBeforeMount(async () => {
-  try {
-    await fetchCurrentDocument(documentId as string);
+const { refresh: refreshDocument } = await useAsyncData(
+  'document',
+  async () => {
+    console.debug('CHECKKKKKK');
+    console.log('CHECKKKKKK');
+    return fetchCurrentDocument(documentId as string)
+      .then(() => true)
+      .catch(error => {
+        showError({
+          status: 400,
+          statusMessage: error,
+        });
+      });
+  },
+  {
+    server: false,
+  },
+);
 
-    if (document?.workspaceId) {
-      console.debug('[TEST] FETCH', document.workspaceId);
-      fetchCurrentWorkspace(document.workspaceId);
-    }
-  } catch (error) {}
+onBeforeMount(async () => {
+  // try {
+  //   await fetchCurrentDocument(documentId as string);
+  //   // if (document?.workspaceId) {
+  //   //   console.debug('[TEST] FETCH', document.workspaceId);
+  //   //   fetchCurrentWorkspace(document.workspaceId);
+  //   // }
+  // } catch (error) {
+  //   showError({
+  //     status: 500,
+  //     statusMessage: 'Something went wrong',
+  //   });
+  // }
 });
+
+watch(
+  () => document.value?.workspaceId,
+  () => {
+    if (document.value?.workspaceId) {
+      fetchCurrentWorkspace(document.value.workspaceId);
+    }
+  },
+  {
+    immediate: true,
+  },
+);
 
 onMounted(() => {});
 </script>

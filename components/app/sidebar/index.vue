@@ -8,12 +8,12 @@
         "
         :sharedWorkspaces="workspaceListStore.sharedWorkspaces as Workspace[]"
         :defaultWorkspace="
-          workspaceId
+          workspace?.id
             ? [
                 ...workspaceListStore.privateWorkspaces,
                 ...workspaceListStore.collaboratingWorkspaces,
                 ...workspaceListStore.sharedWorkspaces,
-              ].find(item => item.id === workspaceId)
+              ].find(item => item.id === workspace?.id)
             : null
         "
         class="px-2"
@@ -45,12 +45,13 @@ import SidebarNavigation from './SidebarNavigation/index.vue';
 import NativeNavigation from './NativeNavigation.vue';
 import DataListener from './DataListener.vue';
 interface Props {
-  workspaceId: string;
+  // workspaceId: string;
 }
 
 const props = defineProps<Props>();
 
 const { apiFetch } = useBaseFetch();
+const workspacestore = useWorkspaceStore();
 // user
 const userStore = useUserStore();
 // const user = useSupabaseUser();
@@ -59,15 +60,20 @@ const userId = computed(() => {
   // return user.value?.id || '';
 });
 
+const { workspace } = storeToRefs(workspacestore);
+
 const workspaceListStore = useWorkspaceListStore();
 
 const { refresh: refreshWorkspaceList } = await useAsyncData(
   'workspaceList',
-  () => {
+  async () => {
     return workspaceListStore
       .fetchWorkspaces()
       .then(() => true)
       .catch(error => alert(error));
+  },
+  {
+    server: false,
   },
 );
 
@@ -84,9 +90,9 @@ const {
   refresh: resetWorkspaceFolders,
   error: foldersError,
 } = await useAsyncData(
-  () => getWorkspaceFoldersApi(props.workspaceId as string),
+  () => getWorkspaceFoldersApi(workspace.value?.id as string),
   {
-    watch: [() => props.workspaceId],
+    watch: [() => workspace.value?.id],
   },
 );
 
@@ -119,20 +125,20 @@ watch(
   },
 );
 
-watch(
-  [userId],
-  async () => {
-    if (userId) {
-      await Promise.all([
-        // resetSubscriptionData(),
-        refreshWorkspaceList(),
-      ]);
-    }
-  },
-  {
-    immediate: true,
-  },
-);
+// watch(
+//   [userId],
+//   async () => {
+//     if (userId) {
+//       await Promise.all([
+//         // resetSubscriptionData(),
+//         refreshWorkspaceList(),
+//       ]);
+//     }
+//   },
+//   {
+//     immediate: true,
+//   },
+// );
 
 // onMounted(() => {
 //   workspaceListStore.fetchWorkspaces();

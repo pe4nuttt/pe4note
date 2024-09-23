@@ -1,6 +1,7 @@
 <template>
   <div>
     <!-- Topbar -->
+    <DocumentTopbar />
 
     <!-- Document Header -->
 
@@ -9,6 +10,14 @@
 </template>
 
 <script setup lang="ts">
+import DocumentTopbar from './DocumentTopbar.vue';
+
+interface Props {
+  document: Document;
+}
+
+const props = defineProps<Props>();
+
 onMounted(() => {
   console.log('[onMounted] document content');
 });

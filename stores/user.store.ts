@@ -13,8 +13,8 @@ export const useUserStore = defineStore('user', () => {
 
   // Get user info
   const init = async () => {
-    const supaabseUser = useSupabaseUser();
-    const res = await $fetch(`/api/user/${supaabseUser.value?.id}`);
+    const supabaseUser = useSupabaseUser();
+    const res = await $fetch(`/api/user/${supabaseUser.value?.id}`);
     user.value = res as User;
     console.debug('STORE::', user.value);
   };
