@@ -1,5 +1,5 @@
 <template>
-  <div class="h-11 flex items-center justify-between px-3">
+  <div class="h-11 flex items-center justify-between">
     <DocumentBreadcrumb />
     <DocumentTopbarActions />
   </div>

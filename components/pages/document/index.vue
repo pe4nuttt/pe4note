@@ -1,9 +1,10 @@
 <template>
-  <div>
+  <div class="px-3">
     <!-- Topbar -->
     <DocumentTopbar />
 
     <!-- Document Header -->
+    <DocumentHeader />
 
     <!-- Document Content -->
   </div>
@@ -11,6 +12,7 @@
 
 <script setup lang="ts">
 import DocumentTopbar from './DocumentTopbar.vue';
+import DocumentHeader from './DocumentHeader.vue';
 
 interface Props {
   document: Document;
