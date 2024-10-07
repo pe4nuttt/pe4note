@@ -23,7 +23,7 @@ const collectionChangesChannel = supabaseClient
   );
 
 const documentChangesChannel = supabaseClient
-  .channel('document-changes-channel')
+  .channel('documents-changes-channel')
   .on(
     'postgres_changes',
     {

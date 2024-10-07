@@ -2,6 +2,7 @@ import type { Prisma } from '@prisma/client';
 import prisma_client from '~/prisma/prisma.client';
 import * as z from 'zod';
 import type { Document } from './service.type';
+import type { v4 } from 'uuid';
 
 export namespace DocumentService {
   export async function getNestedDocuments(
@@ -55,5 +56,25 @@ export namespace DocumentService {
       //   message: 'Document not found',
       // });
     }
+  }
+
+  export async function updateDocument(
+    uid: string,
+    documentId: string,
+    data: Partial<Document>,
+  ) {
+    // Check permission
+
+    // Update
+    const document: Partial<Document> = await prisma_client.documents.update({
+      where: {
+        id: documentId,
+      },
+      data: data,
+    });
+
+    delete document.data;
+
+    return document;
   }
 }
