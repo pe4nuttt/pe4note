@@ -90,3 +90,15 @@ export const getDocumentApi = async (
     },
   });
 };
+
+export const updateDocumentInfoApi = async (
+  documentId: string,
+  data: Partial<Document>,
+): Promise<{ data: Document }> => {
+  const { apiFetch } = useBaseFetch();
+
+  return await apiFetch(`/document/${documentId}`, {
+    method: 'PATCH',
+    body: data,
+  });
+};

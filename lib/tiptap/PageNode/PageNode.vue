@@ -44,8 +44,6 @@ export default defineComponent({
     EmojiPicker,
   },
   setup(props) {
-    console.debug('[PROPS]', props);
-
     const pageIcon = props.node.attrs.icon || EDITOR_CONTENT.DEFAULT_PAGE_ICON;
     const pageTitle = props.node.attrs.title || 'Untitled';
     const pageHref = props.node.attrs.href;

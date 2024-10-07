@@ -23,9 +23,7 @@ import Item from './Item.vue';
 const workspaceStore = useWorkspaceStore();
 const { workspace } = storeToRefs(workspaceStore);
 
-watch(workspace, val => {
-  console.log('[SIDEBAR Navigation]', val);
-});
+watch(workspace, val => {});
 </script>
 
 <style scoped></style>

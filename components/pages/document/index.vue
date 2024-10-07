@@ -1,13 +1,15 @@
 <template>
-  <div class="px-3">
+  <div class="px-3 h-full flex flex-col">
     <!-- Topbar -->
     <DocumentTopbar />
 
-    <!-- Document Header -->
-    <DocumentHeader />
+    <div class="flex-1 overflow-hidden overflow-y-scroll mr-[-4px]">
+      <!-- Document Header -->
+      <DocumentHeader />
 
-    <!-- Document Content -->
-    <DocumentEditor />
+      <!-- Document Content -->
+      <DocumentEditor />
+    </div>
   </div>
 </template>
 

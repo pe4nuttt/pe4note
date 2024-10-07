@@ -13,14 +13,12 @@ const documentId = route.params.documentId;
 
 const documentStore = useDocumentStore();
 const { document } = storeToRefs(documentStore);
-const { fetchCurrentDocument } = documentStore;
+const { fetchCurrentDocument, closeDocument } = documentStore;
 const { fetchCurrentWorkspace } = useWorkspaceStore();
 
 const { refresh: refreshDocument } = await useAsyncData(
   'document',
   async () => {
-    console.debug('CHECKKKKKK');
-    console.log('CHECKKKKKK');
     return fetchCurrentDocument(documentId as string)
       .then(() => true)
       .catch(error => {
@@ -50,6 +48,8 @@ onBeforeMount(async () => {
   // }
 });
 
+onUnmounted(() => {});
+
 watch(
   () => document.value?.workspaceId,
   () => {
@@ -62,7 +62,9 @@ watch(
   },
 );
 
-onMounted(() => {});
+onMounted(async () => {
+  await closeDocument();
+});
 </script>
 
 <style scoped></style>
