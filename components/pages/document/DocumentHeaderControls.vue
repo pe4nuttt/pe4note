@@ -2,7 +2,7 @@
   <div class="group">
     <div
       id="document-header-controls"
-      class="flex group-hover:visible invisible"
+      class="flex opacity-0 group-hover:visible group-hover:opacity-100 duration-150 transition-opacity ease-in-out invisible"
     >
       <!-- Add icon -->
       <Button variant="ghost" class="text-sm px-2 py-1 h-7 font-normal">
