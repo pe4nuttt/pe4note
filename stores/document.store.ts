@@ -9,8 +9,14 @@ type DocumentState = AppDocumentType & {
 };
 
 export const useDocumentStore = defineStore('document', () => {
-  const document = ref<AppDocumentType | null>();
   const supabaseClient = useSupabaseClient();
+  const { $dataStore } = useNuxtApp();
+
+  const document = ref<AppDocumentType | null>();
+  const bannerUpload = ref({
+    isUploading: false,
+    progress: 0,
+  });
   let documentChangesChannel: RealtimeChannel | null = null;
 
   watch(
@@ -100,11 +106,45 @@ export const useDocumentStore = defineStore('document', () => {
     }
   };
 
+  const updateDocumentBanner = async (file: File) => {
+    try {
+      bannerUpload.value.isUploading = true;
+      const res = await $dataStore.uploadBannerImage(file, 'document', {
+        onUploadProgress(progressEvent) {
+          const _progress =
+            (progressEvent.loaded / (progressEvent.total || Infinity)) * 100;
+          bannerUpload.value.progress = _progress || 0;
+          if (_progress === 100) {
+            bannerUpload.value.isUploading = false;
+            setTimeout(() => {
+              bannerUpload.value.progress = 0;
+            }, 1000);
+          }
+        },
+      });
+      if (res.data.Key) {
+        const foundIdx = res.data.Key.indexOf('/') || 0;
+        const path = res.data.Key.slice(foundIdx);
+        await updateCurrentDocument({
+          bannerUrl: path,
+        });
+      }
+    } catch (error) {
+      bannerUpload.value = {
+        isUploading: false,
+        progress: 0,
+      };
+      throw error;
+    }
+  };
+
   return {
     document,
+    bannerUpload,
     fetchCurrentDocument,
     updateCurrentDocument,
     openDocument,
     closeDocument,
+    updateDocumentBanner,
   };
 });

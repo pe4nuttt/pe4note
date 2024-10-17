@@ -102,3 +102,7 @@ export const EDITOR_TEXT_COLORS = [
 export const EDITOR_CONTENT = {
   DEFAULT_PAGE_ICON: '📄',
 };
+
+export const MAX_BANNER_IMAGE_SIZE = 5; // MB
+
+export { LOCAL_STORAGE_KEYS } from './preferences';

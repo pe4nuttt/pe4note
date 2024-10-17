@@ -7,6 +7,7 @@
 <script setup lang="ts">
 import Document from '@/components/pages/document';
 
+const { $dataStore } = useNuxtApp();
 const route = useRoute();
 const documentId = route.params.documentId;
 // const documentId = '24f6c494-53f3-403e-9b4a-f78ed19df7fd';
@@ -33,6 +34,15 @@ const { refresh: refreshDocument } = await useAsyncData(
   },
 );
 
+const addAccessDocumentLog = () => {
+  return $dataStore.addUserActivityLog({
+    entity_id: documentId as string,
+    entity_type: 'document',
+    activity_type: 'view',
+    details: null,
+  });
+};
+
 onBeforeMount(async () => {
   // try {
   //   await fetchCurrentDocument(documentId as string);
@@ -46,6 +56,12 @@ onBeforeMount(async () => {
   //     statusMessage: 'Something went wrong',
   //   });
   // }
+  try {
+    const res = await addAccessDocumentLog();
+    console.log('[addAccessDocumentLog] RES', res);
+  } catch (error) {
+    console.log('[addAccessDocumentLog] Error', error);
+  }
 });
 
 onUnmounted(() => {});

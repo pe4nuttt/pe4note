@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { useUserStore } from '~/stores/user.store';
 const whiteList = ['/auth/login', 'error', '/auth/confirm'];
 
@@ -15,7 +16,7 @@ export default defineNuxtRouteMiddleware((to, _from) => {
     } else {
       const userStore = useUserStore();
       // Check user store & update
-      if (!userStore.user) {
+      if (!userStore.user || _.isEmpty(userStore.user)) {
         userStore.init();
       }
       return;

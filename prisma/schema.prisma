@@ -390,7 +390,9 @@ model public_users {
   collections            collections[]
   document_permissions   document_permissions[]
   documents              documents[]
+  user_favorites         user_favorites[]
   users                  auth_users               @relation(fields: [id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_activity_logs    users_activity_logs[]
   workspaces             workspaces[]
 
   @@map("users")
@@ -500,6 +502,31 @@ model document_permissions {
   @@schema("public")
 }
 
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model user_favorites {
+  id          BigInt       @id @default(autoincrement())
+  user_id     String       @db.Uuid
+  entity_id   String       @unique @db.Uuid
+  entity_type entity_type?
+  users       public_users @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@schema("public")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model users_activity_logs {
+  id            BigInt        @id @default(autoincrement())
+  user_id       String        @db.Uuid
+  entity_id     String        @db.Uuid
+  details       String?
+  timestamp     DateTime      @db.Timestamptz(6)
+  activity_type activity_type
+  entity_type   entity_type
+  users         public_users  @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@schema("public")
+}
+
 enum aal_level {
   aal1
   aal2
@@ -565,6 +592,23 @@ enum subscription_status {
   incomplete_expired
   past_due
   unpaid
+
+  @@schema("public")
+}
+
+enum activity_type {
+  view
+  edit
+  create
+  delete
+
+  @@schema("public")
+}
+
+enum entity_type {
+  document
+  collection
+  workspace
 
   @@schema("public")
 }
