@@ -4,12 +4,21 @@
       Good {{ textTime }}, {{ user.full_name }}
     </div>
 
-    <div>
-      <div class="flex gap-2 items-center">
-        <Icon name="lucide:clock-3" size="16px" />
-        <span class="text-sm font-medium">Recently visited</span>
+    <div class="flex flex-col gap-10">
+      <div>
+        <div class="flex gap-2 items-center h-12">
+          <Icon name="lucide:clock-3" size="16px" />
+          <span class="text-sm font-medium">Recently visited</span>
+        </div>
+        <RecentlyVisitedCarousel />
       </div>
-      <RecentlyVisitedCarousel />
+      <div>
+        <div class="flex gap-2 items-center h-12">
+          <Icon name="lucide:clock-3" size="16px" />
+          <span class="text-sm font-medium">Recently visited</span>
+        </div>
+        <RecentlyVisitedCarousel />
+      </div>
     </div>
   </div>
 </template>
