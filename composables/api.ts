@@ -1,6 +1,7 @@
 import type { Prisma } from '@prisma/client';
 import { string } from 'zod';
 import type {
+  Collection,
   Document,
   Folder,
   GetWorkspaceListType,
@@ -102,3 +103,16 @@ export const updateDocumentInfoApi = async (
     body: data,
   });
 };
+
+export const updateCollectionInfoApi = async (
+  collectionId: string,
+  data: Partial<Collection>,
+): Promise<{ data: Collection }> => {
+  const { apiFetch } = useBaseFetch();
+
+  return await apiFetch(`/collection/${collectionId}`, {
+    method: 'PATCH',
+    body: data,
+  });
+};
+

@@ -13,6 +13,7 @@ const documentId = route.params.documentId;
 // const documentId = '24f6c494-53f3-403e-9b4a-f78ed19df7fd';
 
 const documentStore = useDocumentStore();
+const mainPageStore = useMainPageStore();
 const { document } = storeToRefs(documentStore);
 const { fetchCurrentDocument, closeDocument } = documentStore;
 const { fetchCurrentWorkspace } = useWorkspaceStore();
