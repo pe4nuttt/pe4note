@@ -39,3 +39,8 @@ export type AppWorkspaceType = Workspace & {
   collections: AppCollectionType[] | [];
   documents: AppDocumentType[] | [];
 };
+
+export enum AppMainPageType {
+  collection = 'collection',
+  document = 'document',
+}

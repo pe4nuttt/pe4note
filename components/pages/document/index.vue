@@ -18,12 +18,6 @@ import DocumentTopbar from './DocumentTopbar.vue';
 import DocumentHeader from './DocumentHeader.vue';
 import DocumentEditor from './DocumentEditor.vue';
 
-interface Props {
-  document: Document;
-}
-
-const props = defineProps<Props>();
-
 onMounted(() => {
   console.log('[onMounted] document content');
 });

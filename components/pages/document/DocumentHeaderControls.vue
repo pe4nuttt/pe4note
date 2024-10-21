@@ -1,7 +1,7 @@
 <template>
   <div class="group">
     <div
-      id="document-header-controls"
+      id="entity-header-controls"
       class="flex opacity-0 group-hover:visible group-hover:opacity-100 duration-150 transition-opacity ease-in-out invisible"
     >
       <!-- Add icon -->

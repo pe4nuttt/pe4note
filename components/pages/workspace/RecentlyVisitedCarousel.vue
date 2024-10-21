@@ -1,5 +1,5 @@
 <template>
-  <Carousel>
+  <Carousel :opts="{ dragFree: true }" :plugins="[WheelGesturesPlugin()]">
     <CarouselContent>
       <CarouselItem
         v-for="item in Array(10)"
@@ -47,6 +47,7 @@ import {
   CarouselPrevious,
 } from '@/components/ui/carousel';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { WheelGesturesPlugin } from 'embla-carousel-wheel-gestures';
 </script>
 
 <style scoped></style>

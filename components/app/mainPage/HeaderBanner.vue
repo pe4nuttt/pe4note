@@ -72,16 +72,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { AppMainPageType } from '~/lib/types';
 
 const documentStore = useDocumentStore();
-const collectionStore = useCollectionStore();
 const mainPageStore = useMainPageStore();
 const supabase = useSupabaseClient();
 
 const { document } = storeToRefs(documentStore);
-const { collection } = storeToRefs(collectionStore);
-const { bannerUpload, pageType, pageBannerUrl } = storeToRefs(mainPageStore);
+const { bannerUpload } = storeToRefs(mainPageStore);
 
 const changeCoverVisible = ref(false);
 const bannerImageSrc = ref<string | null>();
@@ -102,7 +99,7 @@ watch(
 );
 
 watch(
-  () => pageBannerUrl.value,
+  () => document.value?.bannerUrl,
   val => {
     if (val) {
       console.log('[WATCH]', val);
@@ -114,26 +111,6 @@ watch(
   },
   {
     immediate: true,
-  },
-);
-
-watch(
-  () => [
-    pageType.value,
-    collection?.value?.bannerUrl,
-    document?.value?.bannerUrl,
-  ],
-  () => {
-    console.log(
-      '[COMPUTED]',
-      document?.value?.bannerUrl,
-      collection?.value?.bannerUrl,
-      pageType.value === AppMainPageType.document,
-    );
-
-    if (pageType.value === AppMainPageType.document)
-      pageBannerUrl.value = document?.value?.bannerUrl || null;
-    else pageBannerUrl.value = collection?.value?.bannerUrl || null;
   },
 );
 

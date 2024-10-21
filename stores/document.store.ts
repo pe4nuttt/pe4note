@@ -11,12 +11,10 @@ type DocumentState = AppDocumentType & {
 export const useDocumentStore = defineStore('document', () => {
   const supabaseClient = useSupabaseClient();
   const { $dataStore } = useNuxtApp();
+  const mainPageStore = useMainPageStore();
+  const { bannerUpload } = storeToRefs(mainPageStore);
 
   const document = ref<AppDocumentType | null>();
-  const bannerUpload = ref({
-    isUploading: false,
-    progress: 0,
-  });
   let documentChangesChannel: RealtimeChannel | null = null;
 
   watch(
@@ -140,7 +138,6 @@ export const useDocumentStore = defineStore('document', () => {
 
   return {
     document,
-    bannerUpload,
     fetchCurrentDocument,
     updateCurrentDocument,
     openDocument,
