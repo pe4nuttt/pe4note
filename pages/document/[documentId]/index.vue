@@ -1,22 +1,28 @@
 <template>
   <ClientOnly>
-    <Document />
+    <AppMainPageWrapper>
+      <DocumentEditor />
+    </AppMainPageWrapper>
+    <!-- <Document /> -->
   </ClientOnly>
 </template>
 
 <script setup lang="ts">
-import Document from '@/components/pages/document';
+// import Document from '@/components/pages/document';
+import DocumentEditor from '~/components/pages/document/DocumentEditor.vue';
 
 const { $dataStore } = useNuxtApp();
 const route = useRoute();
 const documentId = route.params.documentId;
 // const documentId = '24f6c494-53f3-403e-9b4a-f78ed19df7fd';
 
+const workspaceStore = useWorkspaceStore();
 const documentStore = useDocumentStore();
 const mainPageStore = useMainPageStore();
 const { document } = storeToRefs(documentStore);
+const { workspace } = storeToRefs(workspaceStore);
 const { fetchCurrentDocument, closeDocument } = documentStore;
-const { fetchCurrentWorkspace } = useWorkspaceStore();
+const { fetchCurrentWorkspace } = workspaceStore;
 
 const { refresh: refreshDocument } = await useAsyncData(
   'document',
@@ -70,7 +76,10 @@ onUnmounted(() => {});
 watch(
   () => document.value?.workspaceId,
   () => {
-    if (document.value?.workspaceId) {
+    if (
+      document.value?.workspaceId &&
+      document.value.workspaceId !== workspace.value?.id
+    ) {
       fetchCurrentWorkspace(document.value.workspaceId);
     }
   },

@@ -116,3 +116,15 @@ export const updateCollectionInfoApi = async (
   });
 };
 
+export const getCollectionApi = async (
+  collectionId: string,
+  select?: Prisma.collectionsSelect,
+): Promise<{ data: Collection }> => {
+  const { apiFetch } = useBaseFetch();
+  return await apiFetch(`/collection/${collectionId}`, {
+    method: 'GET',
+    params: {
+      select: select || '',
+    },
+  });
+};

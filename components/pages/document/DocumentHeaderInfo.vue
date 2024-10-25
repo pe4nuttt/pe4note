@@ -3,11 +3,11 @@
     <!-- Document Title -->
     <div>
       <h1
-        ref="documentTitleRef"
+        ref="titleRef"
         contenteditable
         class="text-4xl font-semibold !outline-none"
-        @input="onInputDocumentTitle"
-        @keydown="onKeyDownDocumentTitle"
+        @input="onInputEntityTitle"
+        @keydown="onKeyDownEntityTitle"
         data-placeholder="Untitled"
       >
         {{ documentTitle }}
@@ -22,13 +22,20 @@
 import _, { debounce } from 'lodash';
 
 import { useToast } from '@/components/ui/toast';
+import { AppMainPageType } from '~/lib/types';
 const { toast } = useToast();
 
 const documentStore = useDocumentStore();
-const { document } = storeToRefs(documentStore);
-const { updateCurrentDocument } = documentStore;
+const collectionStore = useCollectionStore();
+const mainPageStore = useMainPageStore();
 
-const documentTitleRef = ref();
+const { document } = storeToRefs(documentStore);
+const { collection } = storeToRefs(collectionStore);
+const { pageType } = storeToRefs(mainPageStore);
+const { updateCurrentDocument } = documentStore;
+const { updateCurrentCollection } = collectionStore;
+
+const titleRef = ref();
 
 const documentTitle = computed({
   get() {
@@ -58,13 +65,12 @@ const documentTitle = computed({
 //   }, 1000),
 // );
 
-const onInputDocumentTitle = debounce(async (e: Event) => {
+const onInputEntityTitle = debounce(async (e: Event) => {
   const val = (e.target as HTMLHeadingElement).textContent;
   // if (!_.isNil(document.value?.title)) document.value.title = val;
   try {
-    await updateCurrentDocument({
-      title: val || '',
-    });
+    const newTitle = val || '';
+    await handleUpdateTitle(newTitle);
   } catch (error: any) {
     console.debug(error?.response);
     toast({
@@ -76,7 +82,7 @@ const onInputDocumentTitle = debounce(async (e: Event) => {
 }, 1000);
 
 const moveTitleCursorToLeft = () => {
-  const el = documentTitleRef.value;
+  const el = titleRef.value;
   const range = window.document.createRange();
   const sel = window.getSelection();
   range.selectNodeContents(el);
@@ -85,9 +91,21 @@ const moveTitleCursorToLeft = () => {
   sel?.addRange(range);
 };
 
-const onKeyDownDocumentTitle = (e: KeyboardEvent) => {
+const onKeyDownEntityTitle = (e: KeyboardEvent) => {
   if (e.key === 'Enter') {
     e.preventDefault();
+  }
+};
+
+const handleUpdateTitle = async (title: string) => {
+  if (pageType.value === AppMainPageType.document) {
+    await updateCurrentDocument({
+      title,
+    });
+  } else if (pageType.value === AppMainPageType.collection) {
+    await updateCurrentCollection({
+      title,
+    });
   }
 };
 </script>

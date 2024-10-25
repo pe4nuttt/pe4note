@@ -7,6 +7,17 @@ import type { AppCollectionType } from '~/lib/types';
 export const useCollectionStore = defineStore('collection', () => {
   const collection = ref<AppCollectionType | null>();
 
+  const fetchCurrentCollection = async (collectionId: string) => {
+    try {
+      const res = await getCollectionApi(collectionId);
+      collection.value = res.data;
+    } catch (error) {
+      collection.value = null;
+      console.log('[ERROR - STORE] fetchCurrentCollection', error);
+      throw error;
+    }
+  };
+
   const updateCurrentCollection = async (
     collectionData: Partial<Collection>,
   ) => {
@@ -23,5 +34,7 @@ export const useCollectionStore = defineStore('collection', () => {
 
   return {
     collection,
+    fetchCurrentCollection,
+    updateCurrentCollection,
   };
 });

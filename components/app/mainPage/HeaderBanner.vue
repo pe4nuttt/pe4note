@@ -1,57 +1,58 @@
 <template>
   <div
     id="document-banner-wrapper"
-    class="relative group"
+    class="relative group min-h-14"
     @mouseover="toggleHeaderControlsVisible(true)"
     @mouseleave="toggleHeaderControlsVisible(false)"
   >
-    <img
-      v-if="bannerImageSrc"
-      :src="bannerImageSrc"
-      alt=""
-      :class="[
-        `block max-h-[200px] h-[200px] w-full object-center object-cover rounded-[6px]`,
-        {
-          'opacity-50': bannerUpload.isUploading,
-        },
-      ]"
-    />
-    <div
-      :class="
-        cn(
-          `opacity-0 group-hover:visible group-hover:opacity-100 delay-75 duration-150 transition-opacity 
+    <template v-if="bannerImageSrc">
+      <img
+        :src="bannerImageSrc"
+        alt=""
+        :class="[
+          `block max-h-[200px] h-[200px] w-full object-center object-cover rounded-[6px]`,
+          {
+            'opacity-50': bannerUpload.isUploading,
+          },
+        ]"
+      />
+      <div
+        :class="
+          cn(
+            `opacity-0 group-hover:visible group-hover:opacity-100 delay-75 duration-150 transition-opacity 
           ease-in-out flex absolute top-1 right-1 mx-4 rounded-sm bg-card overflow-hidden
           outline-1 outline outline-border shadow
           `,
-          [changeCoverVisible ? 'visible opacity-100' : 'invisible'],
-          {
-            '!invisible': bannerUpload.isUploading,
-          },
-        )
-      "
-    >
-      <Popover v-model:open="changeCoverVisible">
-        <PopoverTrigger as-child>
-          <div
-            class="text-xs px-2 py-1 cursor-pointer hover:bg-accent hover:text-white transition-colors"
-          >
-            Change cover
-          </div>
-        </PopoverTrigger>
-        <PopoverContent
-          class="max-w-[500px] w-[500px] rounded-xl border shadow p-0 overflow-hidden right-1 relative"
-        >
-          <BannerSelection @changeBanner="onBannerChange" />
-        </PopoverContent>
-      </Popover>
-
-      <div class="w-[0.5px] bg-border"></div>
-      <div
-        class="text-xs px-2 py-1 cursor-pointer hover:bg-accent hover:text-white transition-colors"
+            [changeCoverVisible ? 'visible opacity-100' : 'invisible'],
+            {
+              '!invisible': bannerUpload.isUploading,
+            },
+          )
+        "
       >
-        Reposition
+        <Popover v-model:open="changeCoverVisible">
+          <PopoverTrigger as-child>
+            <div
+              class="text-xs px-2 py-1 cursor-pointer hover:bg-accent hover:text-white transition-colors"
+            >
+              Change cover
+            </div>
+          </PopoverTrigger>
+          <PopoverContent
+            class="max-w-[500px] w-[500px] rounded-xl border shadow p-0 overflow-hidden right-1 relative"
+          >
+            <BannerSelection @changeBanner="onBannerChange" />
+          </PopoverContent>
+        </Popover>
+
+        <div class="w-[0.5px] bg-border"></div>
+        <div
+          class="text-xs px-2 py-1 cursor-pointer hover:bg-accent hover:text-white transition-colors"
+        >
+          Reposition
+        </div>
       </div>
-    </div>
+    </template>
 
     <div
       v-if="bannerUpload.isUploading"
@@ -72,13 +73,16 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { AppMainPageType } from '~/lib/types';
 
 const documentStore = useDocumentStore();
+const collectionStore = useCollectionStore();
 const mainPageStore = useMainPageStore();
 const supabase = useSupabaseClient();
 
 const { document } = storeToRefs(documentStore);
-const { bannerUpload } = storeToRefs(mainPageStore);
+const { collection } = storeToRefs(collectionStore);
+const { bannerUpload, pageType, pageBannerUrl } = storeToRefs(mainPageStore);
 
 const changeCoverVisible = ref(false);
 const bannerImageSrc = ref<string | null>();
@@ -99,7 +103,7 @@ watch(
 );
 
 watch(
-  () => document.value?.bannerUrl,
+  () => pageBannerUrl.value,
   val => {
     if (val) {
       console.log('[WATCH]', val);
@@ -111,6 +115,26 @@ watch(
   },
   {
     immediate: true,
+  },
+);
+
+watch(
+  () => [
+    pageType.value,
+    collection?.value?.bannerUrl,
+    document?.value?.bannerUrl,
+  ],
+  () => {
+    console.log(
+      '[COMPUTED]',
+      document?.value?.bannerUrl,
+      collection?.value?.bannerUrl,
+      pageType.value === AppMainPageType.document,
+    );
+
+    if (pageType.value === AppMainPageType.document)
+      pageBannerUrl.value = document?.value?.bannerUrl || null;
+    else pageBannerUrl.value = collection?.value?.bannerUrl || null;
   },
 );
 
