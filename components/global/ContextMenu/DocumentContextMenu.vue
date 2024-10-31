@@ -127,6 +127,13 @@ const handleRenameDocument = async (value: { emoji: ''; title: '' }) => {
         title: value.title,
       });
       // Update data
+      if (res) {
+        workspaceStore.updateWorkspaceRecord(
+          documentId,
+          res as Document,
+          'document',
+        );
+      }
       // workspaceStore.updateWorkspaceFolder(documentId, res);
       console.log('[RES] ', res);
     } catch (error) {
@@ -142,13 +149,13 @@ const handleRenameDocument = async (value: { emoji: ''; title: '' }) => {
 };
 
 const handleAddSubDocument = async () => {
-  if (!workspaceStore.workspace?.id) {
+  if (!workspaceStore.workspace.data?.id) {
     return;
   }
   try {
     const payload: Document = {
       id: uuidv4(),
-      workspaceId: workspaceStore.workspace.id,
+      workspaceId: workspaceStore.workspace.data?.id,
       bannerUrl: null,
       created_at: new Date(),
       data: null,

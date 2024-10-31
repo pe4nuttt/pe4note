@@ -1,7 +1,7 @@
 <template>
   <div class="px-14 h-full flex flex-col gap-6">
     <div class="mt-10 text-3xl font-medium text-center">
-      Good {{ textTime }}, {{ user.full_name }}
+      Good {{ textTime }}, {{ user?.full_name }}
     </div>
 
     <div class="flex flex-col gap-10">
@@ -26,9 +26,12 @@
 <script setup>
 import RecentlyVisitedCarousel from '~/components/pages/workspace/RecentlyVisitedCarousel.vue';
 
+const route = useRoute();
 const userStore = useUserStore();
+const workspaceStore = useWorkspaceStore();
 
 const { user } = storeToRefs(userStore);
+const workspaceId = route.params.workspaceId;
 
 const textTime = computed(() => {
   const hours = new Date().getHours();
@@ -38,6 +41,19 @@ const textTime = computed(() => {
 
   return 'evening';
 });
+
+watch(
+  () => workspaceId,
+  async val => {
+    if (val) {
+      workspaceStore.setCurrentWorkspaceId(workspaceId);
+    }
+  },
+  {
+    immediate: true,
+    flush: 'sync',
+  },
+);
 
 onMounted(() => {
   console.log('[OnMounted] workspaceId page');

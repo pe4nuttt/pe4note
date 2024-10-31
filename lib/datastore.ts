@@ -30,7 +30,7 @@ export const updateCollectionTitleEmoji = async (params: {
   const { data, error } = await supabase
     .from('collections')
     .update({
-      name: newTitle,
+      title: newTitle,
       iconId: newEmoji,
     })
     .eq('id', collectionId)

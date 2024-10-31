@@ -80,21 +80,22 @@ const user = useSupabaseUser();
 
 // Methods
 const fnAddNewCollection = async () => {
-  if (!workspaceStore.workspace?.id) {
+  if (!workspaceStore.workspace.data?.id) {
     return;
   }
 
   try {
     const payload: Collection = {
       id: uuidv4(),
-      workspaceId: workspaceStore.workspace.id,
+      workspaceId: workspaceStore.workspace.data?.id,
       bannerUrl: null,
       created_at: new Date(),
       data: null,
       iconId: '💼',
       inTrash: null,
       ownerId: user.value?.id as string,
-      name: '',
+      title: '',
+      parentDocumentId: null,
     };
 
     await addNewCollection(payload);
@@ -115,14 +116,14 @@ const fnAddNewCollection = async () => {
 };
 
 const fnAddNewDocument = async () => {
-  if (!workspaceStore.workspace?.id) {
+  if (!workspaceStore.workspace.data?.id) {
     return;
   }
 
   try {
     const payload: Document = {
       id: uuidv4(),
-      workspaceId: workspaceStore.workspace.id,
+      workspaceId: workspaceStore.workspace.data?.id,
       bannerUrl: null,
       created_at: new Date(),
       data: null,

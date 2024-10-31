@@ -105,4 +105,8 @@ export const EDITOR_CONTENT = {
 
 export const MAX_BANNER_IMAGE_SIZE = 5; // MB
 
+export const ASYNC_DATA_KEYS = {
+  APP_WORKSPACE_DATA: 'currentWorkspaceData',
+};
+
 export { LOCAL_STORAGE_KEYS } from './preferences';

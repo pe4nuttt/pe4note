@@ -8,12 +8,12 @@
         "
         :sharedWorkspaces="workspaceListStore.sharedWorkspaces as Workspace[]"
         :defaultWorkspace="
-          workspace?.id
+          workspace.data?.id
             ? [
                 ...workspaceListStore.privateWorkspaces,
                 ...workspaceListStore.collaboratingWorkspaces,
                 ...workspaceListStore.sharedWorkspaces,
-              ].find(item => item.id === workspace?.id)
+              ].find(item => item.id === workspace.data?.id)
             : null
         "
         class="px-2"
@@ -90,9 +90,9 @@ const {
   refresh: resetWorkspaceFolders,
   error: foldersError,
 } = await useAsyncData(
-  () => getWorkspaceFoldersApi(workspace.value?.id as string),
+  () => getWorkspaceFoldersApi(workspace.value.data?.id as string),
   {
-    watch: [() => workspace.value?.id],
+    watch: [() => workspace.value.data?.id],
   },
 );
 

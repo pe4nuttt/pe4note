@@ -14,13 +14,16 @@
     <div class="app-header--center">
       <HeaderSearch />
     </div>
-    <div class="app-header--right">Right</div>
+    <div class="app-header--right flex items-center justify-end">
+      <HeaderProfile />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
 import HeaderSearch from './HeaderSearch.vue';
+import HeaderProfile from './HeaderProfile.vue';
 
 const emit = defineEmits<{
   toggleCollapse: [];

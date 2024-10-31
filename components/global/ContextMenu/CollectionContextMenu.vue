@@ -12,7 +12,7 @@
   <RenameDialog
     v-model="showRename"
     :data="{
-      name: collectionContextMenu?.collection?.name as string,
+      name: collectionContextMenu?.collection?.title as string,
       iconId: collectionContextMenu?.collection?.iconId,
     }"
     :float-wrapper-id="renameFloatWrapperId"
@@ -128,13 +128,13 @@ const handleOpenRenameDialog = (collection: Collection, wrapperId: string) => {
 // };
 
 const handleAddSubDocument = async () => {
-  if (!workspaceStore.workspace?.id) {
+  if (!workspaceStore.workspace.data?.id) {
     return;
   }
   try {
     const payload: Document = {
       id: uuidv4(),
-      workspaceId: workspaceStore.workspace.id,
+      workspaceId: workspaceStore.workspace.data?.id,
       bannerUrl: null,
       created_at: new Date(),
       data: null,
@@ -172,6 +172,13 @@ const handleRenameFolder = async (value: { emoji: ''; title: '' }) => {
         newTitle: value.title,
       });
       // Update data
+      if (res) {
+        workspaceStore.updateWorkspaceRecord(
+          collectionId,
+          res as Collection,
+          'collection',
+        );
+      }
       // workspaceStore.updateWorkspaceFolder(collectionId, res);
       console.log('[RES] ', res);
     } catch (error) {

@@ -3,7 +3,7 @@
     <!-- Topbar -->
     <HeaderTopbar />
 
-    <div class="flex-1 overflow-hidden overflow-y-scroll mr-[-4px]">
+    <div class="flex-1 overflow-hidden overflow-y-auto mr-[-4px]">
       <!-- Header -->
       <Header />
 
@@ -17,8 +17,7 @@
 import HeaderTopbar from './HeaderTopbar.vue';
 import Header from './Header.vue';
 
-onMounted(() => {
-});
+onMounted(() => {});
 </script>
 
 <style scoped></style>

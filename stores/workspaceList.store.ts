@@ -1,5 +1,8 @@
 import { defineStore } from 'pinia';
-import type { GetWorkspaceListType } from '~/lib/services/service.type';
+import type {
+  GetWorkspaceListType,
+  Workspace,
+} from '~/lib/services/service.type';
 import type { AppWorkspaceType } from '~/lib/types';
 
 export const useWorkspaceListStore = defineStore('workspaceList', () => {
@@ -8,14 +11,14 @@ export const useWorkspaceListStore = defineStore('workspaceList', () => {
 
   // const userStore = useUserStore();
 
-  const privateWorkspaces = ref<AppWorkspaceType[]>([]);
-  const sharedWorkspaces = ref<AppWorkspaceType[]>([]);
-  const collaboratingWorkspaces = ref<AppWorkspaceType[]>([]);
+  const privateWorkspaces = ref<Workspace[]>([]);
+  const sharedWorkspaces = ref<Workspace[]>([]);
+  const collaboratingWorkspaces = ref<Workspace[]>([]);
 
   const setWorkspaces = async (
-    privateWorkspacesData: AppWorkspaceType[],
-    sharedWorkspacesData: AppWorkspaceType[],
-    collaboratingWorkspacesData: AppWorkspaceType[],
+    privateWorkspacesData: Workspace[],
+    sharedWorkspacesData: Workspace[],
+    collaboratingWorkspacesData: Workspace[],
   ) => {
     privateWorkspaces.value = privateWorkspacesData;
     sharedWorkspaces.value = sharedWorkspacesData;

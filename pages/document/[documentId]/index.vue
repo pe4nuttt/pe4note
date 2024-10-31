@@ -22,7 +22,7 @@ const mainPageStore = useMainPageStore();
 const { document } = storeToRefs(documentStore);
 const { workspace } = storeToRefs(workspaceStore);
 const { fetchCurrentDocument, closeDocument } = documentStore;
-const { fetchCurrentWorkspace } = workspaceStore;
+const { setCurrentWorkspaceId } = workspaceStore;
 
 const { refresh: refreshDocument } = await useAsyncData(
   'document',
@@ -38,6 +38,7 @@ const { refresh: refreshDocument } = await useAsyncData(
   },
   {
     server: false,
+    lazy: true,
   },
 );
 
@@ -78,9 +79,9 @@ watch(
   () => {
     if (
       document.value?.workspaceId &&
-      document.value.workspaceId !== workspace.value?.id
+      document.value.workspaceId !== workspace.value.data?.id
     ) {
-      fetchCurrentWorkspace(document.value.workspaceId);
+      setCurrentWorkspaceId(document.value.workspaceId);
     }
   },
   {

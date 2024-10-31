@@ -5,7 +5,7 @@ export const useUserStore = defineStore('user', () => {
   const { apiFetch } = useBaseFetch();
   const supabaseSession = useSupabaseSession();
 
-  const user = ref<User | {}>({});
+  const user = ref<User | null>();
   const session = computed(() => {
     return supabaseSession.value;
   });
@@ -20,7 +20,7 @@ export const useUserStore = defineStore('user', () => {
   };
 
   const signout = async () => {
-    user.value = {};
+    user.value = null;
   };
 
   return {

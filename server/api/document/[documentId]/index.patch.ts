@@ -2,7 +2,7 @@ import { DocumentService } from '~/lib/services/document.service';
 import * as z from 'zod';
 import { Document } from '~/lib/services/service.type';
 
-const UpdateDocumentSchema = z.object({
+const updateDocumentSchema = z.object({
   title: z.string().nullish(),
   iconId: z.string().nullish(),
   bannerUrl: z.string().nullish(),
@@ -10,7 +10,7 @@ const UpdateDocumentSchema = z.object({
 
 export default defineEventHandler(async event => {
   const resBody = await readValidatedBody(event, body => {
-    return UpdateDocumentSchema.safeParse(body);
+    return updateDocumentSchema.safeParse(body);
   });
   const documentId = getRouterParam(event, 'documentId');
 

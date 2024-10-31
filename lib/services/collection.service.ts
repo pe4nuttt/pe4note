@@ -1,5 +1,6 @@
 import type { Prisma } from '@prisma/client';
 import prisma_client from '~/prisma/prisma.client';
+import type { Collection } from './service.type';
 
 export namespace CollectionService {
   export async function getCollection(
@@ -45,5 +46,24 @@ export namespace CollectionService {
     } catch (error) {
       throw error;
     }
+  }
+
+  export async function updateCollection(
+    uid: string,
+    collectionId: string,
+    data: Partial<Collection>,
+  ) {
+    // Check permission
+
+    // Update
+    const collection: Partial<Collection> =
+      await prisma_client.collections.update({
+        where: {
+          id: collectionId,
+        },
+        data,
+      });
+
+    return collection;
   }
 }

@@ -119,6 +119,7 @@ const fnHideDialog = () => {
 const updatePosition = () => {
   if (props.floatWrapperId) {
     const floatingEle = document.getElementById(props.floatWrapperId);
+    console.debug('[CHECK FLOAT ELE]', floatingEle);
     const refEle = unrefElement(renameDialogRef);
     if (floatingEle && refEle) {
       computePosition(floatingEle, refEle, {

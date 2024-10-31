@@ -1,10 +1,10 @@
 <template>
   <div>
     <div
-      :id="`sidebarItem__collection-${props.item.id}`"
+      :id="wrapperId"
       :class="[
         `flex items-center pr-2 py-[6px] group/sidebar-item hover:!bg-muted rounded-md dark:text-muted-foreground 
-          dark:hover:text-white
+          dark:hover:text-white cursor-pointer
         `,
         {
           'bg-muted/40 folder-context-menu-opening': isOpenContextMenu,
@@ -12,6 +12,7 @@
       ]"
       :style="{ 'padding-left': `${level * 8}px` }"
       @contextmenu="onContextMenu"
+      @click="onClickSidebarItem"
     >
       <!-- Icon -->
       <div class="mr-2 flex item-center justify-center">
@@ -28,7 +29,7 @@
               },
             )
           "
-          @click="isOpened = !isOpened"
+          @click.stop="isOpened = !isOpened"
         >
           <Icon
             name="lucide:chevron-right"
@@ -45,20 +46,28 @@
       <!-- Action -->
       <div
         class="ml-2 hidden group-hover/sidebar-item:inline-flex selection:cursor-pointer dark:text-muted-foreground items-center hover:bg-neutral-700 rounded-sm px-1"
-        @click="onContextMenu"
+        @click.stop="onContextMenu"
       >
         <Icon name="lucide:ellipsis" color="currentColor" size="16px"></Icon>
       </div>
     </div>
     <div v-show="isOpened">
-      <!-- Sub Documents -->
-      <div v-for="subDocument in item.documents" :key="subDocument.id" class>
-        <AppSidebarSidebarNavigationSidebarItem
-          :item="subDocument"
-          :level="level + 1"
-          :isShown="isOpened"
-          type="document"
-        ></AppSidebarSidebarNavigationSidebarItem>
+      <template v-if="item.children.length">
+        <!-- Sub Documents -->
+        <div v-for="subItem in item.children" :key="subItem.id" class>
+          <AppSidebarSidebarNavigationSidebarItem
+            :item="subItem"
+            :level="level + 1"
+            :isShown="isOpened"
+            :type="subItem.type"
+          ></AppSidebarSidebarNavigationSidebarItem>
+        </div>
+      </template>
+      <div
+        v-else
+        class="text-sm pl-8 pr-2 py-[6px] dark:text-muted-foreground font-medium opacity-60"
+      >
+        No pages inside
       </div>
 
       <!-- Files
@@ -78,12 +87,13 @@ export default {
 </script>
 <script setup lang="ts">
 import { cn } from '@/lib/utils';
-import type { AppCollectionType, AppDocumentType } from '~/lib/types';
+import type { AppWorkspaceRecord } from '~/lib/types';
 import Item from './Item.vue';
 import Test from '~/components/global/ContextMenu/Test.vue';
+import type { Collection, Document } from '~/lib/services/service.type';
 
 interface Props {
-  item: AppCollectionType | AppDocumentType;
+  item: AppWorkspaceRecord;
   level?: number;
   isShown?: boolean;
   type: 'collection' | 'document';
@@ -118,10 +128,7 @@ const wrapperId = computed(() => {
 });
 
 const title = computed(() => {
-  if (props.type === 'collection')
-    return (item.value as AppCollectionType).name;
-
-  return (item.value as AppDocumentType).title;
+  return item.value.title;
 });
 
 // Watch
@@ -148,16 +155,20 @@ const onContextMenu = (e: MouseEvent) => {
   if (props.type === 'collection') {
     contextMenuStore.onCollectionContextMenu(
       e,
-      props.item as AppCollectionType,
+      props.item as Collection,
       wrapperId.value,
     );
   } else {
     contextMenuStore.onDocumentContextMenu(
       e,
-      props.item as AppDocumentType,
+      props.item as Document,
       wrapperId.value,
     );
   }
+};
+
+const onClickSidebarItem = () => {
+  navigateTo(`/${props.type}/${props.item.id}`);
 };
 
 const isOpenContextMenu = computed(() => {

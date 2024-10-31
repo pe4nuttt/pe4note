@@ -50,40 +50,33 @@ import {
 } from '@/components/ui/resizable';
 import AppHeader from '@/components/app/header/index.vue';
 import type { SplitterPanel } from 'radix-vue';
+import { ASYNC_DATA_KEYS } from '~/lib/constants';
 
 const route = useRoute();
 const workspaceStore = useWorkspaceStore();
 const layout = useCookie<number[]>('splitter:layout');
 
 const { refresh: refreshCurrentWorkspaceData } = await useAsyncData(
-  'currentWorkspaceData',
+  `${ASYNC_DATA_KEYS.APP_WORKSPACE_DATA}`,
   () =>
     workspaceStore
-      .fetchCurrentWorkspace(route.params.workspaceId as string)
+      .fetchCurrentWorkspace(workspaceStore.workspace.id as string)
       .then(() => true)
       .catch(error => {}),
-  // {
-  //   watch: [() => route.params.workspaceId],
-  //   immediate: true,
-  // },
-);
-const panelRef = ref<InstanceType<typeof SplitterPanel>>();
-
-watch(
-  () => route.params.workspaceId,
-  val => {
-    // console.log('WATCH ROUTE PARAMS::', val);
-    // if (val) {
-    //   workspaceStore.fetchCurrentWorkspace(val as string);
-    // }
-    if (route.params.workspaceId) {
-      refreshCurrentWorkspaceData();
-    }
-  },
   {
+    // watch: [() => workspaceStore.workspace.id || null],
     immediate: true,
   },
 );
+
+watch(
+  () => workspaceStore.workspace.id,
+  val => {
+    refreshCurrentWorkspaceData();
+  },
+);
+
+const panelRef = ref<InstanceType<typeof SplitterPanel>>();
 
 // Methods
 const handleToggleCollapse = () => {

@@ -28,16 +28,25 @@ export const CreateWorkspaceSchema = z.object({
 });
 
 export type AppDocumentType = Document & {
-  documents?: Document[] | [];
+  documents?: AppDocumentType[] | [];
+  collections?: AppCollectionType[] | [];
 };
 
 export type AppCollectionType = Collection & {
   documents?: AppDocumentType[] | [];
 };
 
-export type AppWorkspaceType = Workspace & {
-  collections: AppCollectionType[] | [];
-  documents: AppDocumentType[] | [];
+export type AppWorkspaceType = {
+  id?: string | null;
+  data?: Workspace | null;
+  // collections: AppCollectionType[] | [];
+  // documents: AppDocumentType[] | [];
+  records: AppWorkspaceRecord[] | [];
+};
+
+export type AppWorkspaceRecord = (Collection | Document) & {
+  children: AppWorkspaceRecord[];
+  type: 'document' | 'collection';
 };
 
 export enum AppMainPageType {

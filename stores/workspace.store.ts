@@ -1,11 +1,19 @@
 import { defineStore } from 'pinia';
 import type { Document, Collection } from '~/lib/services/service.type';
-import type { AppCollectionType, AppWorkspaceType } from '~/lib/types';
-import _ from 'lodash';
+import type {
+  AppCollectionType,
+  AppWorkspaceRecord,
+  AppWorkspaceType,
+} from '~/lib/types';
+import _, { isBuffer } from 'lodash';
 import { addNewDocument, addNewCollection } from '~/lib/datastore';
 
 export const useWorkspaceStore = defineStore('workspace', () => {
-  const workspace = ref<AppWorkspaceType>();
+  const workspace = ref<AppWorkspaceType>({
+    id: null,
+    data: null,
+    records: [],
+  });
 
   // Recent ID - use for open sub menu in the sidebar
   const recentAddedDocumentId = ref<string>();
@@ -38,7 +46,11 @@ export const useWorkspaceStore = defineStore('workspace', () => {
       const res = await getWorkspaceDetailApi(workspaceId);
       if (res.data) {
         console.log('[fetchCurrentWorkspace]', res.data);
-        workspace.value = res.data;
+        workspace.value.data = res.data;
+      }
+      const recordsRes = await getWorkspaceRecordsApi(workspaceId);
+      if (recordsRes.data) {
+        workspace.value.records = recordsRes.data;
       }
     } catch (error) {
       console.log('[ERROR - STORE] fetchCurrentWorkspace', error);
@@ -46,8 +58,35 @@ export const useWorkspaceStore = defineStore('workspace', () => {
     }
   };
 
-  const setCurrentWorkspace = (workspaceData: AppWorkspaceType) => {
-    workspace.value = workspaceData;
+  const fetchWorkspaceRecords = async (workspaceId: string) => {
+    try {
+      if (!workspaceId) {
+        return;
+      }
+      const res = await getWorkspaceRecordsApi(workspaceId);
+      if (res.data) {
+        workspace.value.records = res.data;
+      }
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  // const setCurrentWorkspace = (workspaceData: AppWorkspaceType) => {
+  //   workspace.value = workspaceData;
+  // };
+
+  const setCurrentWorkspace = (workspaceData: Partial<AppWorkspaceType>) => {
+    for (const key in workspaceData) {
+      const value = workspaceData[key as keyof AppWorkspaceType];
+      if (value !== undefined && value !== null) {
+        (workspace.value[key as keyof AppWorkspaceType] as any) = value;
+      }
+    }
+  };
+
+  const setCurrentWorkspaceId = (workspaceId: string) => {
+    workspace.value.id = workspaceId;
   };
 
   const updateWorkspaceCollection = (
@@ -68,9 +107,33 @@ export const useWorkspaceStore = defineStore('workspace', () => {
       }
     };
 
-    if (workspace.value?.collections) {
-      findAndReplaceCollection(workspace.value.collections);
-    }
+    // if (workspace.value?.collections) {
+    //   findAndReplaceCollection(workspace.value.collections);
+    // }
+  };
+
+  const updateWorkspaceRecord = (
+    recordId: string,
+    data: Partial<Collection> | Partial<Document>,
+    type: 'collection' | 'document',
+  ) => {
+    if (!workspace.value.records.length) return;
+
+    let newData = data;
+    if (data.data) newData = _.omit(data, ['data']);
+
+    const findAndReplaceRecord = (records: AppWorkspaceRecord[]) => {
+      records.forEach(record => {
+        if (record.id === recordId && record.type === type) {
+          Object.assign(record, newData);
+          return;
+        } else if (record.children.length) {
+          findAndReplaceRecord(record.children);
+        }
+      });
+    };
+
+    findAndReplaceRecord(workspace.value.records);
   };
 
   const handleCreateNewCollection = async (collection: Collection) => {
@@ -103,8 +166,11 @@ export const useWorkspaceStore = defineStore('workspace', () => {
     recentAddedParentCollectionId,
     recentAddedParentDocumentId,
     fetchCurrentWorkspace,
+    fetchWorkspaceRecords,
     setCurrentWorkspace,
+    setCurrentWorkspaceId,
     updateWorkspaceCollection,
+    updateWorkspaceRecord,
     handleCreateNewCollection,
     handleCreateNewDocument,
   };

@@ -1,11 +1,14 @@
 import prisma_client from '~/prisma/prisma.client';
 import { z } from 'zod';
 import type {
+  AppCollectionType,
   AppDocumentType,
+  AppWorkspaceRecord,
   AppWorkspaceType,
   CreateWorkspaceSchema,
 } from '../types';
 import type {
+  Collection,
   Document,
   Workspace,
   WorkspaceWithCollectionDocuments,
@@ -13,6 +16,7 @@ import type {
 import { validate } from 'uuid';
 import { Prisma, type collaborators, type workspaces } from '@prisma/client';
 import { FolderService } from './folder.service';
+import _ from 'lodash';
 
 const buildDocumentTree = (documentList: Document[]) => {
   const hashTable: { [key: string]: AppDocumentType } = Object.create(null);
@@ -33,6 +37,34 @@ const buildDocumentTree = (documentList: Document[]) => {
   });
 
   return nestedDocument;
+};
+
+const buildDocumentAndCollectionTree = (
+  entityList: ((Document | Collection) & {
+    type: 'collection' | 'document';
+  })[],
+) => {
+  const hashTable: { [key: string]: AppWorkspaceRecord } = {};
+  const nestedRecords: AppWorkspaceRecord[] = [];
+
+  entityList.forEach(entity => {
+    hashTable[entity.id] = {
+      ...entity,
+      children: [],
+    };
+  });
+
+  entityList.forEach(entity => {
+    const parentId =
+      entity.parentDocumentId || (entity as Document).collectionId;
+    if (parentId) {
+      hashTable[parentId].children.push(hashTable[entity.id]);
+    } else {
+      nestedRecords.push(hashTable[entity.id]);
+    }
+  });
+
+  return nestedRecords;
 };
 
 export namespace WorkspaceService {
@@ -65,7 +97,7 @@ export namespace WorkspaceService {
   ) {
     let havePermission = false;
     const workspace:
-      | (AppWorkspaceType & {
+      | (Workspace & {
           collaborators: collaborators[];
         })
       | null = await prisma_client.workspaces.findUnique({
@@ -143,18 +175,18 @@ export namespace WorkspaceService {
       if (collaborator) havePermission = true;
     }
 
-    if (workspace && workspace?.folders?.length) {
-      await Promise.all(
-        workspace.folders.map(async (folder, index) => {
-          const subFolders = await FolderService.getNestedFolders(
-            workspaceId,
-            folder.id,
-          );
-          workspace.folders[index].folders = subFolders;
-          return subFolders;
-        }),
-      );
-    }
+    // if (workspace && workspace?.folders?.length) {
+    //   await Promise.all(
+    //     workspace.folders.map(async (folder, index) => {
+    //       const subFolders = await FolderService.getNestedFolders(
+    //         workspaceId,
+    //         folder.id,
+    //       );
+    //       workspace.folders[index].folders = subFolders;
+    //       return subFolders;
+    //     }),
+    //   );
+    // }
 
     if (!havePermission) {
       throw createError({
@@ -172,7 +204,7 @@ export namespace WorkspaceService {
   ) {
     let havePermission = false;
     const workspace:
-      | (AppWorkspaceType & {
+      | (Workspace & {
           collaborators: collaborators[];
         })
       | null = await prisma_client.workspaces.findUnique({
@@ -228,18 +260,18 @@ export namespace WorkspaceService {
     }
 
     // Convert data to nested collections & documents
-    if (workspace) {
-      if (workspace.collections.length) {
-        workspace.collections.forEach((collection, index) => {
-          const documentTree = buildDocumentTree(collection.documents || []);
-          workspace.collections[index].documents = documentTree;
-        });
-      }
-      if (workspace.documents.length) {
-        const documentTree = buildDocumentTree(workspace.documents);
-        workspace.documents = documentTree;
-      }
-    }
+    // if (workspace) {
+    //   if (workspace.collections.length) {
+    //     workspace.collections.forEach((collection, index) => {
+    //       const documentTree = buildDocumentTree(collection.documents || []);
+    //       workspace.collections[index].documents = documentTree;
+    //     });
+    //   }
+    //   if (workspace.documents.length) {
+    //     const documentTree = buildDocumentTree(workspace.documents);
+    //     workspace.documents = documentTree;
+    //   }
+    // }
 
     if (!havePermission) {
       throw createError({
@@ -249,6 +281,68 @@ export namespace WorkspaceService {
     }
 
     return workspace;
+  }
+
+  export async function getWorkspaceRecords(uid: string, workspaceId: string) {
+    let havePermission = false;
+    const workspace = await prisma_client.workspaces.findUnique({
+      where: {
+        id: workspaceId,
+      },
+      include: {
+        collaborators: {
+          include: {
+            users: true,
+          },
+        },
+        collections: {
+          orderBy: {
+            created_at: 'asc',
+          },
+        },
+        documents: {
+          orderBy: {
+            created_at: 'asc',
+          },
+        },
+      },
+    });
+
+    if (!workspace) {
+      throw createError({
+        status: 400,
+        message: 'Invalid workspace id',
+      });
+    }
+
+    if (workspace.workspaceOwner === uid) {
+      havePermission = true;
+    } else {
+      const collaborator = await prisma_client.collaborators.findFirst({
+        where: {
+          userId: uid,
+          workspaceId: workspaceId,
+        },
+      });
+      if (collaborator) havePermission = true;
+    }
+
+    const tmpDocumentsAndCollections = [
+      ...workspace.documents.map(item => ({
+        ..._.omit(item, ['data']),
+        type: 'document',
+      })),
+      ...workspace.collections.map(item => ({ ...item, type: 'collection' })),
+    ] as ((Document | Collection) & {
+      type: 'document' | 'collection';
+    })[];
+    tmpDocumentsAndCollections.sort((a, b) => {
+      return b.created_at.getTime() - a.created_at.getTime();
+    });
+
+    const records = buildDocumentAndCollectionTree(tmpDocumentsAndCollections);
+
+    return records;
   }
 
   export async function getAllWorkspaces(userId: string) {

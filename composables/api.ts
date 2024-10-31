@@ -8,7 +8,7 @@ import type {
   Subscription,
   Workspace,
 } from '~/lib/services/service.type';
-import type { AppWorkspaceType } from '~/lib/types';
+import type { AppWorkspaceRecord, AppWorkspaceType } from '~/lib/types';
 import qs from 'qs';
 
 export const createWorkspaceApi = async (
@@ -72,7 +72,7 @@ export const addCollaboratorsApi = async (
 
 export const getWorkspaceDetailApi = async (
   workspaceId: string,
-): Promise<{ data: AppWorkspaceType }> => {
+): Promise<{ data: Workspace }> => {
   const { apiFetch } = useBaseFetch();
   return await apiFetch(`/workspace/${workspaceId}`, {
     method: 'GET',
@@ -125,6 +125,18 @@ export const getCollectionApi = async (
     method: 'GET',
     params: {
       select: select || '',
+    },
+  });
+};
+
+export const getWorkspaceRecordsApi = async (
+  workspaceId: string,
+): Promise<{ data: AppWorkspaceRecord[] }> => {
+  const { apiFetch } = useBaseFetch();
+  return await apiFetch(`/workspace/records`, {
+    method: 'GET',
+    params: {
+      workspaceId,
     },
   });
 };

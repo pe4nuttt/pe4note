@@ -1,17 +1,17 @@
 <template>
   <div class="flex flex-col gap-1">
     <SidebarItem
-      v-for="collection in workspace?.collections"
-      :key="collection.id"
-      :item="collection"
-      type="collection"
+      v-for="record in workspace.records"
+      :key="record.id"
+      :item="record"
+      :type="record.type"
     />
-    <SidebarItem
+    <!-- <SidebarItem
       v-for="document in workspace?.documents"
       :key="document.id"
       :item="document"
       type="document"
-    />
+    /> -->
     <!-- <Item v-for="file in workspace?.files" :key="file.id" :item="file" /> -->
   </div>
 </template>

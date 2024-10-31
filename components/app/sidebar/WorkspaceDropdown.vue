@@ -123,10 +123,10 @@ import {
 import WorkspaceCreator from '../WorkspaceCreator.vue';
 
 interface Props {
-  privateWorkspaces: Workspace[] | AppWorkspaceType[];
-  collaboratingWorkspaces: Workspace[] | AppWorkspaceType[];
-  sharedWorkspaces: Workspace[] | AppWorkspaceType[];
-  defaultWorkspace?: Workspace | AppWorkspaceType | null;
+  privateWorkspaces: Workspace[];
+  collaboratingWorkspaces: Workspace[];
+  sharedWorkspaces: Workspace[];
+  defaultWorkspace?: Workspace | null;
 }
 
 const props = defineProps<Props>();

@@ -3,6 +3,8 @@
 </template>
 
 <script setup lang="ts">
+import { ASYNC_DATA_KEYS } from '~/lib/constants';
+
 const supabaseClient = useSupabaseClient();
 
 const workspaceListStore = useWorkspaceListStore();
@@ -18,7 +20,7 @@ const collectionChangesChannel = supabaseClient
     async payload => {
       console.log('[COLLECTION REALTIME]', payload);
       // Update data
-      await refreshNuxtData('currentWorkspaceData');
+      await refreshNuxtData(ASYNC_DATA_KEYS.APP_WORKSPACE_DATA);
     },
   );
 
@@ -34,7 +36,7 @@ const documentChangesChannel = supabaseClient
     async payload => {
       console.log('[DOCUMENT REALTIME]', payload);
       // Update data
-      await refreshNuxtData('currentWorkspaceData');
+      await refreshNuxtData(ASYNC_DATA_KEYS.APP_WORKSPACE_DATA);
     },
   );
 onMounted(() => {

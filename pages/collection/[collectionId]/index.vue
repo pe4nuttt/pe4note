@@ -17,7 +17,7 @@ const collectionStore = useCollectionStore();
 const { collection } = storeToRefs(collectionStore);
 const { workspace } = storeToRefs(workspaceStore);
 const { fetchCurrentCollection } = collectionStore;
-const { fetchCurrentWorkspace } = workspaceStore;
+const { setCurrentWorkspaceId } = workspaceStore;
 
 const { refresh: refreshCollection } = await useAsyncData(
   'collection',
@@ -33,6 +33,7 @@ const { refresh: refreshCollection } = await useAsyncData(
   },
   {
     server: false,
+    lazy: true,
   },
 );
 
@@ -50,9 +51,9 @@ watch(
   () => {
     if (
       collection.value?.workspaceId &&
-      collection.value?.workspaceId !== workspace.value?.id
+      collection.value?.workspaceId !== workspace.value.data?.id
     ) {
-      fetchCurrentWorkspace(collection.value.workspaceId);
+      setCurrentWorkspaceId(collection.value.workspaceId);
     }
   },
   {
